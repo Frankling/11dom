@@ -1,0 +1,48 @@
+  x'     cosz  -sinz 0    0     x
+  y' =   sinz  cosz  0    0  *  y    z轴逆时针时针旋转b度  转置矩阵则是顺时针
+  z'     0     0     1    0     z
+  1      0     0     0    1     1
+
+  x'     1     0     0     0     x
+  y' =   0     cosx  -sinx 0  *  y    x轴逆时针时针旋转b度  转置矩阵则是顺时针
+  z'     0     sinx  cosx  0     z
+  1      0     0     0     1     1
+
+  x'     cosy   0    siny  0     x
+  y' =   0      1    0     0  *  y   y轴逆时针时针旋转b度  转置矩阵则是顺时针
+  z'     -siny  0    cosy  0     z
+  1      0      0    0     1     1
+
+
+  x'     1     0     0    tx    x
+  y' =   0     1     0    ty  * y    平移(tx,ty,tz);
+  z'     0     0     1    tz    z
+  1      0     0     0    1     1
+
+
+  x'     sx     0     0    0    x
+  y' =   0     sy     0    0  * y    缩放(sx,sy,sz);
+  z'     0     0     sz    0    z
+  1      0     0      0    1    1
+                              法向量的变化前乘以模型变换矩阵的逆转置矩阵
+
+   错误的计算
+  x'       Math.cos(z)*Math.cos(y)*sx, Math.sin(z),                -Math.sin(y),                    0.0      x   错误的计算
+  y'  =    -Math.sin(z),               Math.cos(x)*Math.cos(z)*sy, Math.sin(x),                     0.0    * y   错误的计算
+  z'       Math.sin(y),                -Math.sin(x),               Math.cos(x)*Math.cos(y)*sz,      0.0      z   错误的计算
+  1        tx,                         ty,                         tz,                              1.0      1   错误的计算
+
+ webGL是按列排序的所以1 3  写成数组 1 2 3 4
+                      2 4
+
+
+
+                      不错的方法
+                          while ( scene.children.length > 0 ) {
+
+                                  this.allObject3D.children.push( scene.children[ 0 ] );
+                                  this.addObject( scene.children[ 0 ] );
+
+                              }
+
+

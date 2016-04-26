@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/ui-color-picker.css">
+</head>
+<body>
+
+<script>
+    var dataBaseFile= "model/dataBase.json";
+    var sceneFile= "model/scene.json";
+    var sceneBGFile="model/sceneBG.json";
+    var sceneGlobalFile="model/sceneGlobal.json";
+</script>
+<script src="js/libs/three.js"></script>
+<script src="js/libs/newLib/materialLib.js"></script>
+
+<script src="js/libs/ui.js"></script>
+<script src="js/libs/signals.min.js"></script>
+<script src="js/libs/jquery-2.1.1.js"></script>
+
+
+<script src="js/libs/controls/OrbitControls.js"></script>
+<script src="js/libs/controls/First-person.js"></script>
+<script src="js/libs/controls/FlyControls.js"></script>
+<script src="js/libs/controls/myTransformControls.js"></script>
+
+<script src="js/libs/renderer/Projector.js"></script>
+
+<script src="js/libs/loaders/AssimpJSONLoader.js"></script>
+<script src="js/libs/loaders/OBJLoader.js"></script>
+<script src="js/libs/loaders/MTLLoader.js"></script>
+<script src="js/libs/loaders/OBJMTLLoader.js"></script>
+<script src="js/libs/loaders/ColladaLoader.js"></script>
+
+<script src="js/libs/composer/shaders/CopyShader.js"></script>
+<script src="js/libs/composer/shaders/ConvolutionShader.js"></script>
+<script src="js/libs/composer/shaders/SepiaShader.js"></script>
+<script src="js/libs/composer/shaders/VignetteShader.js"></script>
+<script src="js/libs/composer/shaders/DotScreenShader.js"></script>
+
+<script src="js/libs/composer/postprocessing/MaskPass.js"></script>
+<script src="js/libs/composer/postprocessing/BloomPass.js"></script>
+<script src="js/libs/composer/postprocessing/DotScreenPass.js"></script>
+<script src="js/libs/composer/postprocessing/EffectComposer.js"></script>
+<script src="js/libs/composer/postprocessing/RenderPass.js"></script>
+<script src="js/libs/composer/postprocessing/ShaderPass.js"></script>
+
+
+<script src="js/libs/newLib/Arrayremove.js"></script>
+<script src="js/libs/newLib/inputSlider.js"></script>
+<script src="js/libs/newLib/ui-color-picker.js"></script>
+<script src="js/libs/newLib/FileSaver.js"></script>
+<script src="js/libs/newLib/composer.js"></script>
+
+<script src="js/Share.js"></script>
+<script src="js/loader.js"></script>
+<script src="js/pathImport.js"></script>
+<script src="js/loadShaders.js"></script>
+<script src="js/Editor.js"></script>
+<script src="js/Menubar.js"></script>
+<script src="js/Menubar.object.js"></script>
+<script src="js/Menubar.interface.js"></script>
+<script src="js/Menubar.object.Material.js"></script>
+<script src="js/Menubar.light.js"></script>
+<script src="js/Menubar.scenarios.js"></script>
+<script src="js/Menubar.Vr.js"></script>
+<script src="js/Tool.js"></script>
+<script src="js/Lib.js"></script>
+<script src="js/Viewport.js"></script>
+
+<script>
+
+    var editor = new Editor();
+    var Share=  new Share(editor);
+
+    var tool = new Tool(  editor );
+    document.body.appendChild( tool.dom );
+
+    var viewport = new Viewport(  editor );
+    document.body.appendChild( viewport.dom );
+
+    var menubar = new Menubar(  editor );
+    document.body.appendChild( menubar.dom );
+
+    var lib = new Lib(  editor );
+    document.body.appendChild(lib.dom );
+
+    window.onkeydown=function(event){
+        switch ( event.keyCode ) {
+            case 17: // ctrl
+                editor.keyCode["ctrl"]=true;
+                break;
+        }
+    };
+    window.onkeyup=function(event){
+        switch ( event.keyCode ) {
+            case 17: // ctrl
+                editor.keyCode={};
+                break;
+        }
+    };
+
+    editor.signals.windowResize.dispatch();
+
+</script>
+
+<script src="js/initTHREE.js"></script>
+</body>
+</html>

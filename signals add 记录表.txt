@@ -1,0 +1,95 @@
+objectAdded：
+1：本地导入物体时，物体列表改变  Menubar.object.js
+   editor.signals.objectAdded.add( function ( object ) {
+                         var listOfObject3D = new UI.Panel();
+                         listOfObject3D.setClass(" listOfObject3D");
+                         listOfObject3D.setId(object.uuid);
+                         listOfObject3D.dom.innerHTML=object.name;
+                         listOfObjectBody.add( listOfObject3D  );
+                         listOfObject3D.onClick(function(){
+                             editor.select(object);
+
+                             for(var w=0;w<listOfObject3D.dom.children.length;w++){
+                                 var _display=listOfObject3D.dom.children[w].style.display;
+                                 if(_display=="block"){
+                                     listOfObject3D.dom.children[w].style.display="none";
+                                 }else{
+                                     listOfObject3D.dom.children[w].style.display="block";
+                                 }
+
+
+                             }
+                         })
+                         object.traverse(function(child){
+                             if(child instanceof THREE.Group){
+                                 var _uuid=child.uuid;
+                                 var listOfObjectGroup = new UI.Panel();
+                                 listOfObjectGroup.setClass(" listOfObjectGroup");
+                                 listOfObjectGroup.setId(_uuid);
+                                 listOfObjectGroup.dom.innerHTML=child.name;
+                                 listOfObject3D.add(listOfObjectGroup);
+                                 listOfObjectGroup.onClick(function(event){
+                                     event.stopPropagation();
+                                     var _uuid=event.target.id;
+                                     var OBJECT3D=editor.allObject3D;
+
+                                         OBJECT3D.traverse(function(child){
+                                             if(child.uuid==_uuid){
+
+                                                 editor.select(child);
+                                             }
+                                         });
+
+                                 });
+                             }
+                         })
+
+     });
+
+   2:当添加物体为灯光是更新材质  Viewport.js
+     signals.objectAdded.add( function ( object ) {
+
+            var materialsNeedUpdate = false;
+
+            object.traverse( function ( child ) {
+
+                if ( child instanceof THREE.Light ) materialsNeedUpdate = true;
+                if(child instanceof  THREE.Mesh)  objects.push( child );
+
+            } );
+
+            if ( materialsNeedUpdate === true ) updateMaterials();
+
+        } );
+selectChanged:
+1:选中的物体改变时渲染一次	Menubar.object.js
+    editor.signals.selectChanged.add(function(object){
+        editor.signals.sceneGraphChanged.dispatch();
+
+    })
+cameraChanged:
+1:相机改变时渲染一次	Viewport.js
+       signals.cameraChanged.add( function () {
+
+           render();
+
+       } );
+sceneGraphChanged:
+1:场景改变时改变时渲染一次	Viewport.js
+    signals.sceneGraphChanged.add( function () {
+
+            render();
+
+    } );
+windowResize:
+1:窗口大小改变时渲染一次	Viewport.js
+    signals.windowResize.add( function () {
+
+        camera.aspect = container.dom.offsetWidth / container.dom.offsetHeight;
+        camera.updateProjectionMatrix();
+
+        renderer.setSize( container.dom.offsetWidth, container.dom.offsetHeight );
+
+        render();
+
+    } );

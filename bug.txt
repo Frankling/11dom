@@ -1,0 +1,7 @@
+  1：缩放 父级元素时子物体旋转问题                                (物体的缩放 应该根据父级的缩放和自身的旋转调节(旋转的时候也要进行缩放操作))
+  2：改变物体的父级时，父级的Matrix的改变将影响物体的位移旋转缩放（原始MatrixWorld减去新的parentMatrix）;
+
+
+  warn:在移动物体时可以先不更新 boxhelper 先隐藏 ，等mouseup时在update boxhelper；
+
+

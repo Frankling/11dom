@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+<script src="signals.min.js"></script>
+<script>
+
+function firstExample(){
+    //custom object that dispatch signals
+  //var Signal = signals.Signal;
+  //var myObject = {
+  //    started : new Signal(), //past tense is the recommended signal naming convention
+  //    stopped : new Signal()
+  //};
+  //function onStarted(param1, param2){
+  //    alert(param1 + param2);
+  //}
+
+    var SIGNALS=signals;
+     this.signals={
+         objectAdded: new SIGNALS.Signal(),
+         sceneGraphChanged: new SIGNALS.Signal()
+     };
+    this.signals.objectAdded.add(function(){
+        render()
+    });
+    this.signals.objectAdded.add(function(){
+        render()
+    });
+function render(){
+    alert(2);
+}
+    this.signals.objectAdded.dispatch();
+    this.signals.sceneGraphChanged.dispatch();
+
+  // myObject.started.add(onStarted); //add listener                                        添加要执行的函数
+  // myObject.started.dispatch('foo', 'bar'); //dispatch signal passing custom parameters 执行一次onStarted
+  // myObject.started.remove(onStarted); //remove a single listener                         移除要执行的函数
+}
+
+function secondExample(){
+    var Signal = signals.Signal;
+    var myObject = {
+        started : new Signal(), //past tense is the recommended signal naming convention
+        stopped : new Signal()
+    };
+    function onStopped(){
+        alert('stopped');
+    }
+    function onStopped2(){
+        alert('stopped listener 2');
+    }
+    myObject.stopped.add(onStopped);
+    myObject.stopped.add(onStopped2);
+    myObject.stopped.dispatch();
+   // myObject.stopped.removeAll(); //remove all listeners of the `stopped` signal            移除所有执行的函数
+
+}
+
+function ThirdExample(){
+    var Signal = signals.Signal;
+    var myObject = {
+        started : new Signal(), //past tense is the recommended signal naming convention
+        stopped : new Signal()
+    };
+    var i = 0;
+    myObject.started.add(function(){
+        i += 1;
+        alert(i);
+    });
+    myObject.started.dispatch(); //will alert 1
+    myObject.started.dispatch(); //will alert 2
+}
+
+function fourthExample(){
+    var Signal = signals.Signal;
+    var myObject = {
+        started : new Signal(), //past tense is the recommended signal naming convention
+        stopped : new Signal()
+    };
+    var i = 0;
+    var j = 0;
+    function nicaicas(){
+        alert("3");
+    }
+    function nicaicas1(){
+        alert("4");
+    }
+   // myObject.started.add(function(){
+   //     i += 1;
+   //     alert(i);
+   // });
+    myObject.started.add(nicaicas);
+    myObject.started.add(nicaicas1);
+   // myObject.started.add(function(){
+   //     j += "2";
+   //     alert(j);
+   // });
+//
+    //myObject.started.dispatch(); //will alert 1
+    myObject.started.active = false;                           // 冻结监听 
+    myObject.started.dispatch(); //nothing happens
+    myObject.started.removeAll();
+    myObject.started.active = true;                           // 激活监听
+    myObject.started.dispatch(); //will alert 2
+
+}
+
+function fifthExample(){
+    var Signal = signals.Signal;
+    var myObject = {
+        started : new Signal(), //past tense is the recommended signal naming convention
+        stopped : new Signal()
+    };
+    myObject.started.add(function(){
+        return false; //if handler returns `false` will also stop propagation
+    });
+    myObject.started.add(function(){
+        alert('second listener'); //won't be called since first listener stops propagation
+    });
+    myObject.started.dispatch();     //因为return false 将不会执行接下来的add函数
+
+
+}
+
+function sixthExample(){
+    var Signal = signals.Signal;
+    var myObject = {
+        started : new Signal(), //past tense is the recommended signal naming convention
+        stopped : new Signal()
+    };
+    myObject.started.add(function(){
+        myObject.started.halt(); //prevent next listeners on the queue from being executed 阻止下次的监听事件
+    });
+    myObject.started.add(function(){
+        alert('second listener'); //won't be called since first listener stops propagation
+    });
+    myObject.started.dispatch();
+    myObject.started.dispatch();
+}
+
+function seventhexample(){
+    var Signal = signals.Signal;
+    var myObject = {
+        started : new Signal(), //past tense is the recommended signal naming convention
+        stopped : new Signal()
+    };
+    foo = 'bar';
+    var obj = {
+        foo : 10
+    };
+
+    function handler1(){
+        alert(this.foo);
+    }
+    function handler2(){
+        alert(this.foo);
+    }
+    //note that you cannot add the same handler twice to the same signal without removing it first
+    myObject.started.add(handler1); //default execution context
+    myObject.started.add(handler2, obj); //set a different execution context  this将会变成obj
+    myObject.started.dispatch(); //first handler will alert "bar", second will alert "10".
+}
+
+function eigthexample(){
+    var Signal = signals.Signal;
+    var myObject = {
+        started : new Signal(), //past tense is the recommended signal naming convention
+        stopped : new Signal()
+    };
+    var handler1 = function(){
+        alert('foo');
+    };
+    var handler2 = function(){
+        alert('bar');
+
+
+    };
+    var handler3 = function(){
+        alert('haha');
+
+
+    };
+    myObject.started.add(handler1); //default priority is 0
+    myObject.started.add(handler2); //setting priority to 2 will make `handler2` execute before `handler1`
+    myObject.started.add(handler3, null, 2);//在最后一个add添加一个优先的执行函数 2代表第二个add
+    myObject.started.dispatch(); //will alert "bar" than "foo"
+}
+
+
+function ninthexample(){
+    var Signal = signals.Signal;
+    var myObject = {
+        started : new Signal(), //past tense is the recommended signal naming convention
+        stopped : new Signal()
+    };
+    var handler1 = function(){
+        alert('foo bar');
+    };
+    var handler2 = function(){
+        alert('lorem ipsum');
+    };
+    var binding1 = myObject.started.add(handler1); //methods `add()` and `addOnce()` returns a SignalBinding object
+
+    //暂时理解为：binding1将复制 myObject.started.add(handler1);binding1与myObject.started.add(handler1)将占有不同的内存地址
+    myObject.started.add(handler2);
+    myObject.started.dispatch(); //will alert "foo bar" than "lorem ipsum"
+    binding1.active = false; //disable a single binding
+    myObject.started.dispatch(); //will alert "lorem ipsum"
+    binding1.active = true;
+    myObject.started.dispatch(); //will alert "foo bar" than "lorem ipsum"
+}
+
+
+function tenthexample(){
+    var Signal = signals.Signal;
+    var myObject = {
+        started : new Signal(), //past tense is the recommended signal naming convention
+        stopped : new Signal()
+    };
+    var handler = function(){
+        alert('foo bar');
+    };
+    var binding = myObject.started.add(handler); //methods `add()` and `addOnce()` returns a SignalBinding object
+    binding.execute(); //will alert "foo bar"
+
+}
+function eleventhexample(){
+    var Signal = signals.Signal;
+    var myObject = {
+        started : new Signal(), //past tense is the recommended signal naming convention
+        stopped : new Signal()
+    };
+    var binding = myObject.started.add(function(){
+        alert('foo bar');
+    });
+    myObject.started.dispatch(); //will alert "foo bar"
+    binding.detach();
+    alert(binding.isBound()); //will alert `false`
+    myObject.started.dispatch(); //nothing happens
+
+}
+function thirteenthexample(){
+    var Signal = signals.Signal;
+    var myObject = {
+        started : new Signal(), //past tense is the recommended signal naming convention
+        stopped : new Signal()
+    };
+    var binding1 = myObject.started.add(function(){
+        alert('foo bar');
+    });
+    var binding2 = myObject.started.addOnce(function(){
+        alert('foo bar');
+    });
+    alert(binding1.isOnce()); //alert "false"
+    alert(binding2.isOnce()); //alert "true"
+}
+function fourteenthexample(){
+    var Signal = signals.Signal;
+    var myObject = {
+        started : new Signal(), //past tense is the recommended signal naming convention
+        stopped : new Signal()
+    };
+    var foo = 'bar';
+    var obj = {
+        foo : "it's over 9000!"
+    };
+    var binding = myObject.started.add(function(){
+        alert(this.foo);
+    });
+    myObject.started.dispatch(); //will alert "bar"
+    binding.context = obj;
+    myObject.started.dispatch(); //will alert "it's over 9000!"
+}
+
+function sixteenthexample(){
+    var Signal = signals.Signal;
+    var myObject = {
+        started : new Signal(), //past tense is the recommended signal naming convention
+        stopped : new Signal()
+    };
+    var binding = myObject.started.add(function(a, b, c){
+        alert(a +' '+ b +' '+ c);
+    });
+    binding.params = ['lorem', 'ipsum']; //set default parameters of the binding
+    myObject.started.dispatch('dolor','lorem1', 'ipsum'); //will alert "lorem ipsum dolor"
+}
+function seventeenthexample(){
+    var Signal = signals.Signal;
+    var myObject = {
+        started : new Signal(), //past tense is the recommended signal naming convention
+        stopped : new Signal()
+    };
+    function onStart(a){
+        console.log(a);
+    }
+    myObject.started.add(onStart);
+    alert(myObject.started.has(onStart)); // true
+}
+
+function eightexample(){
+    var Signal = signals.Signal;
+    var myObject = {
+        started : new Signal(), //past tense is the recommended signal naming convention
+        stopped : new Signal()
+    };
+    function onStart(a){
+        console.log(a);
+    }
+    myObject.started.add(onStart);
+    alert(myObject.started.has(onStart)); // true
+}
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+<script>
+    var nicai=function(){
+        this.a=function(){
+            console.log(1)
+        }
+        this.b=function(){
+            console.log(2)
+    }
+        this.c=function(){
+            console.log(3)
+        }
+        var init=function(){
+            console.log(4)
+        };
+        init.call(this);
+
+    }
+    var haha=new nicai();//
+    document.body.onclick=function(){alert(1)}
+</script>
+</body>
+</html>

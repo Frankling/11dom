@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+<script>
+    var haha={};
+    var nicai=function(){
+        var scope=this;
+        var camera1=function(){
+            this.value=1;
+        }
+        var camera2=function(){
+            this.value=2;
+        }
+        var camera3=function(){
+            this.value=3;
+        }
+
+        this.camera= new camera1();
+        this.setMode=function(mode){
+            if(mode==1){
+                this.camera=new camera1();
+            }
+            if(mode==2){
+                this.camera=new camera2();
+            }
+            if(mode==3){
+                this.camera=new camera3();
+            }
+
+        }
+    }
+    var camera=new nicai();
+    camera.setMode(2)
+
+</script>
+</body>
+</html>

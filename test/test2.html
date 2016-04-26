@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+<script>
+    document.addEventListener( "mousedown", onPointerDown, false );
+    function onPointerDown( event ) {
+        var pointer = event.changedTouches ? event.changedTouches[0] : event;
+        console.warn(pointer)
+
+    }
+
+    function nicai(){
+        this.a=1;
+        this.b=2;
+        nicai.abc=8;
+        this.c=nicai.abc;
+    }
+    nicai.prototype={
+        c:3,
+        d:4
+    }
+    function nicai2(){
+        nicai.call(this);
+
+    }
+
+    var haha=new nicai2()
+</script>
+</body>
+</html>

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+<script>
+
+    var a=function (){
+        this.children=[];
+        this.getObjectByProperty= function( name, value ) {
+
+            if ( this[ name ] === value ) return this;
+
+            for ( var i = 0, l = this.children.length; i < l; i ++ ) {
+
+                var child = this.children[ i ];
+                var object = child.getObjectByProperty( name, value );
+
+                if ( object !== undefined ) {
+
+                    return object;
+
+                }
+
+            }
+
+            return undefined;
+
+        };
+    };
+
+    var b=new a();
+    b.uuid="buuid";
+    var c=new a();
+    c.uuid="cuuid";
+    var d=new a();
+    d.uuid="duuid";
+    b.children[0]=c;
+    b.children[1]=d;
+
+
+
+</script>
+</body>
+</html>

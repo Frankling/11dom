@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+<input id="show2" type="text">
+<script>
+    var nicai=function(){
+        this.a=1;
+        this.b=1;
+    };
+    nicai.prototype={
+        c:function(){console.log(1)}
+    }
+var nicai1=new nicai()
+
+    var strStoreDate = window.localStorage? window.localStorage.getItem("menuTitle"): Cookie.read("menuTitle")
+    console.log(strStoreDate);
+    document.getElementById("show2").value=strStoreDate;
+</script>
+
+<script src="window.localStorage.js"></script>
+</body>
+</html>
