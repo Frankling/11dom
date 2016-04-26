@@ -73,6 +73,7 @@ Menubar.light = function ( editor ) {
                 light = new THREE.AmbientLight(0x545454,1.8);
                 name = "AmbientLight";
         }
+        //灯光标志
         var object =new THREE.LightObject();
         var light_sprite = new THREE.Sprite( material );
         light_sprite.scale.x= light_sprite.scale.y= light_sprite.scale.z=20;
@@ -313,7 +314,6 @@ Menubar.light = function ( editor ) {
             var listOfObject3D = new UI.Panel();
             listOfObject3D.setClass(" listOfObject3D");
             listOfObject3D.setId(object.uuid);
-            listOfObject3D.dom.tabIndex="1";
             listOfObject3D.dom.innerHTML=object.name;
             listContent.add( listOfObject3D  );
             listOfObject3D.onClick(function(){
