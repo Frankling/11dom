@@ -98,34 +98,68 @@
             var AmbientLight= editor.scene.getObjectByName("AmbientLight").children[1];
             AmbientLight.color.setHex("0x"+dataBase.AmbientLight.color);
             AmbientLight.intensity=dataBase.AmbientLight.intensity;
-        }
+        };
+        this.initLabel=function(){
+            for(var i in dataBase.labels){
 
+                editor.allObject3D.traverse(function(child){
+                    if(child.uuid==i){
 
+                        editor.labels[i]=child;
+                        child.cameraPosition= dataBase.labels[child.uuid].cameraPosition;
+                        var bool=dataBase.labels[child.uuid].enableLine == "none" ?true:false;
+                        var title=dataBase.labels[child.uuid].title;
+                        editor.refreshLabelUI(child,bool,title);
+
+                    }
+
+                },true)
+            }
+
+        };
     };
     (function(){
         var loadEndV=[false,false];
         var loadEnd=function(){
             if(loadEndV[0]&&loadEndV[1]){
-                _initTHREE.initAmbientLight();
+
                 _initTHREE.initTraceCamera();
+                _initTHREE.initLabel();
             }
         };
         var _initTHREE=new initTHREE(editor);
         var loader = new THREE.XHRLoader();
         loader.load(sceneFile, function ( text ) {
-            editor.fromJSON( JSON.parse(text),editor.scene) ;
-            loadEndV[0]=true;
-            loadEnd();
-            editor.signals.sceneGraphChanged.dispatch();
+            var t=text;
+            var l=t.split(",");
+            console.log(l)
+            var haha=[];
+            for(var i=0;i<l.length;i++){
+                haha.push(parseInt(l[i]))
+            }
+
+            var date1=new Date();  //开始时间
+
+            gz.unGz(haha,function(a){
+                var date2=new Date();    //结束时间
+                var date3=date2.getTime()-date1.getTime()
+                console.log(date3)
+                editor.fromJSON(a,editor.scene) ;
+                loadEndV[0]=true;
+                loadEnd();
+                editor.signals.sceneGraphChanged.dispatch();
+            })
+
 
         });
         loader.load(dataBaseFile, function ( text ) {
             dataBase=JSON.parse(text);
             loadEndV[1]=true;
             loadEnd();
-            _initTHREE.initGlobalControls();
+         //   _initTHREE.initGlobalControls();
             _initTHREE.initBackground();
             _initTHREE.initComposer();
+            _initTHREE.initAmbientLight();
             editor.signals.sceneGraphChanged.dispatch();
         });
 

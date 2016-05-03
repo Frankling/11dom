@@ -5,21 +5,18 @@ var Viewport=function(editor){
     var signals = editor.signals;
 
     var  container = new UI.Panel();
+
     container.setId( 'viewport' );
 
     var renderer = editor.renderer;
     renderer.autoClear=false;
     renderer.setClearColor(0x555555);
+    var canvas=renderer.domElement
 
     container.dom.appendChild(renderer.domElement);
     var scene = editor.scene;
     var sceneHelpers = editor.sceneHelpers;
     var sceneGlobal = editor.sceneGlobal;
-
-    editor.camera.position.z=1000;
-
-
-
 
     var lightGlobal = editor.lightGlobal;
     editor.sceneGlobal.add(lightGlobal);
@@ -32,7 +29,7 @@ var Viewport=function(editor){
     grid.visible=false;
     editor.scene.add(grid);
 
-    editor.controls = new THREE.OrbitControls(editor.camera,container.dom);
+    editor.controls = new THREE.OrbitControls(editor.camera,canvas);
   //  editor.controls.enableDamping = true;
   //  editor.controls.dampingFactor  =  1;
     editor.controls.addEventListener('change', function (){
@@ -53,11 +50,18 @@ var Viewport=function(editor){
     var mousePosition=new THREE.Vector2();
     var raycaster = new THREE.Raycaster();
 
-    container.dom.addEventListener("mousedown",onMouseDown,false);
+    canvas.addEventListener("mousedown",onMouseDown,false);
 
     window.addEventListener( 'resize', onWindowResize, false );
+    var labelSelected;
+    var downType;
+    var time;
+    var oldTime;
     function onMouseDown(event){
         event.preventDefault();
+        if(oldTime) time= new Date().getTime()-oldTime;
+
+
         var button=event.button;
         var intersects=editor.getIntersects(event);
         if(button==0) {
@@ -66,6 +70,24 @@ var Viewport=function(editor){
 
                 //transformControls.hasIntersect=false;
                 editor.select(intersects[0].object);
+                if(editor.labels.hasOwnProperty(  intersects[0].object.uuid)){
+                    labelSelected= intersects[0].object;
+                    if(time<300){
+                        if(labelSelected.cameraPosition){
+                            editor.camera.position.x= labelSelected.cameraPosition.PX;
+                            editor.camera.position.y= labelSelected.cameraPosition.PY;
+                            editor.camera.position.z= labelSelected.cameraPosition.PZ;
+                            editor.controls.target.x= labelSelected.cameraPosition.TX;
+                            editor.controls.target.y= labelSelected.cameraPosition.TY;
+                            editor.controls.target.z= labelSelected.cameraPosition.TZ;
+                            editor.controls.update();
+                            editor.signals.labelChange.dispatch();
+                          //  editor.signals.sceneGraphChanged.dispatch();
+                        }
+
+                    }
+                }
+
             }
         }else if(button==2){
             editor.selectClear();
@@ -76,20 +98,48 @@ var Viewport=function(editor){
         }
 
 
-        event.target.addEventListener("mousemove",onMouseMove,false);
-        event.target.addEventListener("mouseup",onMouseUp,false);
+        container.dom.addEventListener("mousemove",onMouseMove,false);
+        container.dom.addEventListener("mouseup",onMouseUp,false);
+        oldTime=new Date().getTime();
     }
+    editor.signals.addLabel.add(function(label){
+       objects.push(label);
+    });
     function onMouseMove(event){
         event.preventDefault();
-        mousePosition.x = ( (event.offsetX)/ (renderer.domElement.width) ) * 2 - 1;
-        mousePosition.y = - ( event.offsetY/ renderer.domElement.height ) * 2 + 1;
-        raycaster.setFromCamera(mousePosition, editor.camera );
+        var button=event.button;
+
+        var intersects=editor.getIntersects(event);
+
+        for(var i=0;i<intersects.length;i++){
+
+            if(intersects[i].object instanceof THREE.Mesh){
+                var point=intersects[i].point;
+            }
+
+        }
+
+        if(point&&labelSelected){
+            editor.controls.enabled=false
+            var offset=new THREE.Vector3().copy(labelSelected.getWorldPosition()).sub(point);
+            labelSelected.position.sub(offset);
+            signals.selectTransform.dispatch();
+            signals.sceneGraphChanged.dispatch();
+        }
+
+
+
+       // mousePosition.x = ( (event.offsetX)/ (renderer.domElement.width) ) * 2 - 1;
+       // mousePosition.y = - ( event.offsetY/ renderer.domElement.height ) * 2 + 1;
+       // raycaster.setFromCamera(mousePosition, editor.camera );
 
     }
     function onMouseUp(event){
         event.preventDefault();
-        event.target.removeEventListener("mousedown",onMouseDown,false);
-        event.target.removeEventListener("mousemove",onMouseMove,false);
+        editor.controls.enabled=true;
+        labelSelected=undefined;
+        container.dom.removeEventListener("mousedown",onMouseDown,false);
+        container.dom.removeEventListener("mousemove",onMouseMove,false);
     }
     function onWindowResize( event ) {
         editor.signals.windowResize.dispatch();
@@ -173,16 +223,28 @@ var Viewport=function(editor){
             var left=( v.x+1)/2*container.dom.offsetWidth;
             var top=( -v.y+1)/2*container.dom.offsetHeight;
 
-            var scale = position.distanceTo(editor.camera.position) / 180;
+            var scale = position.distanceTo(editor.camera.position) / 80;
             labels[i].scale.set(scale,scale,scale);
+            var child=document.getElementById(i+"V").children[1];
+            var boolLine=child.style.display;
+            if(boolLine=="none"){
+                document.getElementById(i+"V").style.left= left+5+"px";
+                document.getElementById(i+"V").style.top= top-17+"px";
+            }else{
+                var height=parseFloat(child.style.height);
+                document.getElementById(i+"V").style.left= left+5+"px";
+                document.getElementById(i+"V").style.top= top-40-height+"px";
 
-            document.getElementById(i).style.left= left+5+"px";
-            document.getElementById(i).style.top= top-90+"px";
+            }
+
         }
 
     } );
     signals.selectChanged.add( function (object ) {
-
+        if(editor.labels.hasOwnProperty(object.uuid)){
+            editor.signals.sceneGraphChanged.dispatch();
+            return
+        }
         transformControls.attach(editor.selected);
         editor.sceneHelpers.add(transformControls);
         editor.signals.sceneGraphChanged.dispatch();
@@ -193,7 +255,7 @@ var Viewport=function(editor){
         transformControls.detach();
         editor.sceneHelpers.remove(transformControls);
 
-    })
+    });
     signals.objectAdded.add( function ( object ) {
 
         var materialsNeedUpdate = false;
@@ -229,20 +291,24 @@ var Viewport=function(editor){
     } );
     signals.selectTransform.add(function(mode){
         signals.labelChange.dispatch();
+
         if(mode!==undefined){
             transformControls.setMode(mode);
         }
 
         var helper=editor.helpers;
         var boxhelper=editor.boxHelpers
-        for(i in helper){
+        for(var i in helper){
                 helper[i].update();
 
         }
-        for(i in boxhelper){
+        for(var i in boxhelper){
           if(boxhelper[i] instanceof  THREE.BoxHelper){
+
                 if(editor.selected[i]!==undefined){
+
                     boxhelper[i].update(editor.selected[i]);
+
                 }
             }
         }
@@ -257,7 +323,8 @@ var Viewport=function(editor){
                     for(var i=0;i<child.children.length;i++){
                         var id=child.children[i].uuid;
                         delete editor.labels[id];
-                        document.getElementById("viewport").removeChild(document.getElementById(id));
+                        document.getElementById("viewport").removeChild(document.getElementById(id+"V"));
+                        document.getElementById("labelContent").removeChild(document.getElementById(id));
                     }
 
                 if(child.geometry){
@@ -275,5 +342,6 @@ var Viewport=function(editor){
         var id = object.uuid;
         $("#"+id).remove();
     });
+
     return container;
 }

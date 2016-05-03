@@ -8858,19 +8858,20 @@ THREE.Object3D.prototype = {
 
 	raycast: function () {},
 
-	traverse: function ( callback ) {
-
-		callback( this );
+	traverse: function ( callback ,bool) {
+		if(!bool) callback( this );
 
 		var children = this.children;
 
 		for ( var i = 0, l = children.length; i < l; i ++ ) {
 			if(children[ i ]!=undefined){
-				children[ i ].traverse( callback );
+				if(bool) callback( children[i] );
+				children[ i ].traverse( callback,bool );
 			}
 		}
 
 	},
+
 
 	traverseVisible: function ( callback ) {
 
@@ -21731,7 +21732,6 @@ THREE.Texture.prototype = {
 		function getDataURL( image ) {
 
 			var canvas;
-
 			if ( image.toDataURL !== undefined ) {
 
 				canvas = image;
@@ -25896,6 +25896,7 @@ THREE.WebGLRenderer = function ( parameters ) {
 		var materialProperties = properties.get( material );
 
 		var parameters = programCache.getParameters( material, _lights, fog, object );
+
 		var code = programCache.getProgramCode( material, parameters );
 
 		var program = materialProperties.program;

@@ -8,6 +8,6 @@ var Menubar = function ( editor ) {
     container.add(new Menubar.scenarios(editor));
     container.add(new Menubar.Vr(editor));
 
-    //container.add(new Menubar.interface(editor));
+    container.add(new Menubar.interface(editor));
     return container;
 };

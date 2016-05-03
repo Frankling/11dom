@@ -108,11 +108,6 @@ three.js
 THREE.ObjectLoader.prototype = {的parseImages和	parseTextures
 
 
-  	   待改：
-                        envmap 为THREE.WebGLRenderTargetCube加prototype.toJSON；
-                        定制化页面的物体列表，把物体列表和灯光列表的body提取出来调整高度
-                        动画，碰撞,.dispatch()有不必要的重复,阻力,灯光跟踪为实时渲染
-
  ================================================three.js
 
 THREE.DirectionalLightHelper.prototype.update = function () {
@@ -127,3 +122,26 @@ THREE.DirectionalLightHelper.prototype.update = function () {
 		v1.setFromMatrixPosition( this.light.matrixWorld );
 
 		聚光灯和方向光位置（0，1，0）改成（0，0，0）
+
+ ================================================three.js
+
+	traverse: function ( callback ,bool) {
+
+    		if(!bool) callback( this );
+
+    		var children = this.children;
+
+    		for ( var i = 0, l = children.length; i < l; i ++ ) {
+    			if(children[ i ]!=undefined){
+    				children[ i ].traverse( callback );
+    			}
+    		}
+
+    	},
+	THREE.Object3d增加traverse增加一个参数
+
+
+  	   待改：
+                        envmap 为THREE.WebGLRenderTargetCube加prototype.toJSON；
+                        定制化页面的物体列表，把物体列表和灯光列表的body提取出来调整高度
+                        动画，碰撞,.dispatch()有不必要的重复,阻力,灯光跟踪为实时渲染

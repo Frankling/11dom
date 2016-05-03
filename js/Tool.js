@@ -146,6 +146,19 @@ var Tool= function ( editor ) {
        //dataBase.camera.position.x=editor.camera.position.x
        //dataBase.camera.position.y=editor.camera.position.y
        //dataBase.camera.position.z=editor.camera.position.z
+        //sprite
+        dataBase.labels={};
+        var label=editor.labels;
+        for(var i in label){
+            var child=document.getElementById(label[i].uuid+"V");
+           dataBase.labels[i]={};
+           dataBase.labels[i].enableLine=child.children[1].style.display;
+           dataBase.labels[i].lineValue=parseInt(child.children[1].style.height);
+           dataBase.labels[i].title=child.children[0].innerHTML;
+           dataBase.labels[i].cameraPosition=label[i].cameraPosition;
+
+        }
+
         //composer
 
        dataBase.composer.DarkNight=editor.composer.DarkNight[1];
@@ -183,15 +196,27 @@ var Tool= function ( editor ) {
 
 
         var scene =editor.scene.toJSON();
+        console.log(scene)
+       //var scene1= JSON.stringify(scene);
+        //var scene1= JSON.stringify(scene);
+        gz.enGz(scene,function(dd) {
+           console.log('压缩后：'+ (dd.length/1024/1024) + 'Mb');
 
-        var scene1= JSON.stringify(scene);
+            saveAs(new Blob([dd]  ,{type: "Int8Array"}),"scene.json");
+
+        },function(a){
+
+            console.log( (a*100|0) + '%');
+
+        });
+
+
         var sceneBG = editor.planbox.toJSON();
         var sceneBG1= JSON.stringify(sceneBG);
         var sceneGlobal = editor.skybox.toJSON();
         var sceneGlobal1= JSON.stringify(sceneGlobal );
         var data1= JSON.stringify(dataBase);
 
-        saveAs(new Blob([scene1]  ,{type: "text/plain;charset=utf-8"}),"scene.json");
         saveAs(new Blob([sceneGlobal1]  ,{type: "text/plain;charset=utf-8"}),"sceneGlobal.json");
         saveAs(new Blob([sceneBG1]  ,{type: "text/plain;charset=utf-8"}),"sceneBG.json");
         saveAs(new Blob([data1]  ,{type: "text/plain;charset=utf-8"}),"dataBase.json");

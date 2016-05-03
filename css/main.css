@@ -862,23 +862,27 @@ html, body {
 }
 /*interface========================================================================*/
 .label2d{
-    width: 150px;
-    height: 40px;
 
     position:absolute;
     z-index: 200;
 }
 .labelHead{
-    margin-left: 100px;
-    width: 100%;
+    width: 80px;
     height: 20%;
-    background: #414141;
+    opacity: 0.8;
+    color: #e4e2e1;
+    border-radius: 7px 7px 0px 0px;
+    background: #232323;
 }
 .labelBody{
-    margin-left: 100px;
-    width: 100%;
-    height: 80%;
-    background: #414141;
+
+    width:  180px;
+    height: 100%;
+    opacity: 0.8;
+    padding: 10px;
+    color: #e4e2e1;
+    border-radius: 7px;
+    background: #232323;
 }
 .editorBg {
     width: 100%;

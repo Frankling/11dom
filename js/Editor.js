@@ -14,6 +14,8 @@ var Editor = function () {
         windowResize:new SIGNALS.Signal(),
         selectClear:new SIGNALS.Signal(),
         labelChange:new SIGNALS.Signal(),
+        refreshLabelUI:new SIGNALS.Signal(),
+        addLabel:new SIGNALS.Signal(),
         envmappingChange:new SIGNALS.Signal(),
         initTHREE:{
             initGlobalLight:new SIGNALS.Signal(),
@@ -230,6 +232,9 @@ Editor.prototype = {
     select: function ( object ) {
 
        if(object.parent instanceof THREE.LightObject)  var object=object.parent;
+     // if(this.labels.hasOwnProperty(object.uuid)){
+     //
+     // }
 
         var uuid=object.uuid;
         var needAddHelper=false;
@@ -315,7 +320,9 @@ Editor.prototype = {
         var scope = this;
         var arry=[];
         object.traverse( function ( child) {
-            if(child.uuid==undefined){
+
+            if(child.uuid==undefined||child.uuid==""){
+
                 arry.push(child);
             }
             if ( child.geometry !== undefined ) scope.addGeometry( child.geometry );
@@ -324,7 +331,8 @@ Editor.prototype = {
                 scope.addHelper(child)
         } );
         for(var i=0;i<arry.length;i++){
-            object.remove(arry[i]);
+
+            arry[i].parent.remove(arry[i]);
         }
         parent.add( object );
         this.signals.objectAdded.dispatch( object,parent);
@@ -565,7 +573,7 @@ Editor.prototype = {
                     }
                 });
 
-                this.refreshUI(c[i].children,c[i]);
+                if(!(c[i] instanceof THREE.Mesh)) this.refreshUI(c[i].children,c[i]);
             }
         }
 
@@ -580,7 +588,7 @@ Editor.prototype = {
         var listContentDown=function(e){
             e.stopPropagation();
             e.preventDefault();
-            if(div==event.target){
+            if(div==e.target){
                 return;
             }
             oldDownTarget=e.target;
@@ -608,8 +616,8 @@ Editor.prototype = {
             if( moveTime>3) {
                 downTarget.style.pointerEvents = "none";
                 downTarget.style.position = " fixed";
-                downTarget.style.left = event.clientX + "px";
-                downTarget.style.top = event.clientY + "px";
+                downTarget.style.left = e.clientX + "px";
+                downTarget.style.top = e.clientY + "px";
             }
         };
         var listContentUp=function(e) {
@@ -620,7 +628,7 @@ Editor.prototype = {
                 eyeBool=false;
                 var addChildObj;
                 var addParentObj;
-                var upTarget = event.target;
+                var upTarget = e.target;
                 var getUpTarget=function( t) {
                     if (t.type == "noMove") {
                         var nt = t.parentNode;
@@ -663,10 +671,10 @@ Editor.prototype = {
 
                         if(typeVis){
 
-                            event.target.style.backgroundImage="url('image/eyeOpen.png')";
+                            e.target.style.backgroundImage="url('image/eyeOpen.png')";
 
                         }else{
-                            event.target.style.backgroundImage="url('image/eyeClose.png')";
+                            e.target.style.backgroundImage="url('image/eyeClose.png')";
                         }
                         child.visible=!typeVis;
                     }
@@ -802,6 +810,10 @@ Editor.prototype = {
         });
 
         editor.signals.sceneGraphChanged.dispatch();
+    },
+    refreshLabelUI:function(label,bool,title){
+
+        this.signals.refreshLabelUI.dispatch(label,bool,title);
     }
 
 };
