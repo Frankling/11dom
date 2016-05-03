@@ -77,9 +77,11 @@ var Editor = function () {
     this.boxHelpers={};
     this.allObject3D=new THREE.Object3D();
     this.scene.uuid=this.allObject3D.uuid;
- //   this.alladdenvMap=[];
+ // this.alladdenvMap=[];
     this.requestLoop = false;
     this.traceCamera={};
+    this.rcube=new THREE.CubeTextureLoader().load(["rcube/1_BK.jpg","rcube/1_DN.jpg","rcube/1_FR.jpg","rcube/1_LF.jpg","rcube/1_RT.jpg","rcube/1_UP.jpg"]);
+
 
 
 

@@ -184,8 +184,26 @@ var Viewport=function(editor){
 
     }
     function addenvMap(material,mappings){
-        var images=editor.enable2D?editor.planbox.material.map.image:[];
-        var type=mappings==301?305:304
+         var images=[];
+         var type=mappings;
+         var texture=new THREE.CubeTexture();
+         var materials=editor.skybox.material.materials;
+         if(editor.enable2D){
+             for(var i=0;i<editor.rcube.image.length;i++){
+                 images.push(editor.rcube.image[i]);
+         }
+         }else{
+             for(var i=0;i<materials.length;i++){
+             images.push(materials[i].map.image);
+         }
+         }
+         texture.mapping=type;
+         material.envMap =texture;
+         texture.image=images;
+         texture.needsUpdate=true;
+         editor.signals.sceneGraphChanged.dispatch();
+       /* var images=editor.enable2D?editor.planbox.material.map.image:[];
+        var type=mappings==301?305:304;
         var number=editor.enable2D?type:mappings;
         var texture=editor.enable2D?new THREE.Texture(): new THREE.CubeTexture();
         var materials=editor.skybox.material.materials;
@@ -198,7 +216,7 @@ var Viewport=function(editor){
         material.envMap =texture;
         texture.image=images;
         texture.needsUpdate=true;
-        editor.signals.sceneGraphChanged.dispatch();
+        editor.signals.sceneGraphChanged.dispatch();*/
 
     }
 

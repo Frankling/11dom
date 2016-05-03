@@ -815,26 +815,39 @@ var Material = function (editor) {
     //材质列表
     function setMaterialType() {
         //  var material;
-        var materialtype;
-        switch (materialClass.getValue()) {
-            case 'MeshLambertMaterial':
-                materialtype = new THREE.MeshLambertMaterial();
-                break;
-            case 'MeshPhongMaterial':
-                materialtype = new THREE.MeshPhongMaterial();
-                break;
-            case 'MeshStandardMaterial':
-                materialtype = new THREE.MeshStandardMaterial();
-                break;
-        }
-        setRowVisibility(materialtype);
+        // var materialtype;
+        /* switch (materialClass.getValue()) {
+         case 'MeshLambertMaterial':
+         materialtype = new THREE.MeshLambertMaterial();
+         break;
+         case 'MeshPhongMaterial':
+         materialtype = new THREE.MeshPhongMaterial();
+         break;
+         case 'MeshStandardMaterial':
+         materialtype = new THREE.MeshStandardMaterial();
+         break;
+         }*/
+
         for (var i in editor.selected) {
             editor.selected[i].traverse(function (child) {
                 if (child instanceof THREE.Mesh) {
                     if (child.material) {
+                        var materialtype;
+                        switch (materialClass.getValue()){
+                            case 'MeshLambertMaterial':
+                                materialtype = new THREE.MeshLambertMaterial();
+                                break;
+                            case 'MeshPhongMaterial':
+                                materialtype = new THREE.MeshPhongMaterial();
+                                break;
+                            case 'MeshStandardMaterial':
+                                materialtype = new THREE.MeshStandardMaterial();
+                                break;
+                        }
                         if(child.material.envMap){
                             materialtype.envMap  = child.material.envMap;
                         }
+                        setRowVisibility(materialtype);
                         child.material = materialtype;
                         MaterialUpdate (child.material);
                         editor.signals.sceneGraphChanged.dispatch();
