@@ -21732,6 +21732,9 @@ THREE.Texture.prototype = {
 		function getDataURL( image ) {
 
 			var canvas;
+			if(image.currentSrc.indexOf("base64")){
+				return image.currentSrc;
+			}
 			if ( image.toDataURL !== undefined ) {
 
 				canvas = image;

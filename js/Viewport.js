@@ -264,6 +264,13 @@ var Viewport=function(editor){
             return
         }
         transformControls.attach(editor.selected);
+        if(object instanceof THREE.LightObject){
+            $(".side_panel").css("display","none");
+            $(".title")[1].click();
+        }else{
+            $(".side_panel").css("display","none");
+            $(".title")[0].click();
+        }
         editor.sceneHelpers.add(transformControls);
         editor.signals.sceneGraphChanged.dispatch();
 
