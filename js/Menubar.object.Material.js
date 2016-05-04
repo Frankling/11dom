@@ -930,11 +930,14 @@ var Material = function (editor) {
                 mTextureOption.dom.querySelectorAll('input')[2].value=material.map.repeat.x;
                 mMapTextureBut.dom.click();
             }else{
-                mMapBoxImg.dom.style.backgroundImage="";
+                //mMapBoxImg.dom.style.backgroundImage="";
                 //mapcontext.fillStyle="#"+material.color.getHexString();
                 //mapcontext.fillRect(0,0,mapcanvas.width, mapcanvas.height);
-                mTextureContext.fillStyle="#171717";
-                mTextureContext.fillRect(0,0,mTextureCanvas.width, mTextureCanvas.height);
+                //mTextureContext.fillStyle="#171717";
+                //mTextureContext.fillRect(0,0,mTextureCanvas.width, mTextureCanvas.height);
+                //mTextureOption.dom.setAttribute("img","");
+                mTextureOption.dom.querySelector('div').click();
+                //$(mTextureOption.dom).trigger("change");
                 mMapColorBut.dom.click();
             }
             if(material.lightMap!==undefined&&material.lightMap!==null){
@@ -944,12 +947,12 @@ var Material = function (editor) {
                 mLightTextureOption.dom.querySelectorAll('input')[1].value=material.lightMap.offset.width;
                 mLightTextureOption.dom.querySelectorAll('input')[2].value=material.lightMap.repeat.x;
             }else{
-                mLightBoxImg.dom.style.backgroundImage="";
-
+                mLightTextureOption.dom.querySelector('div').click();
+                //mLightBoxImg.dom.style.backgroundImage="";
                 //lightmapcontext.fillStyle="#171717";
                 //lightmapcontext.fillRect(0,0, lightmapcanvas.width,  lightmapcanvas.height);
-                lMapTextureContext.fillStyle="#171717";
-                lMapTextureContext.fillRect(0,0,lMapTextureCanvas.width, lMapTextureCanvas.height);
+                // lMapTextureContext.fillStyle="#171717";
+                // lMapTextureContext.fillRect(0,0,lMapTextureCanvas.width, lMapTextureCanvas.height);
             }
             if(material.shininess!==undefined){
                 materialspecularmaprange.setValue(material.shininess);
@@ -967,11 +970,12 @@ var Material = function (editor) {
                 mSpecularTextureOption.dom.querySelectorAll('input')[2].value=material.specularMap.repeat.x;
                 mSpecularMapTextureBut.dom.click();
             }else if(material.specular!==undefined){
-                mSpecularMapImg.dom.style.backgroundImage="";
+                mSpecularTextureOption.dom.querySelector('div').click();
+                //mSpecularMapImg.dom.style.backgroundImage="";
                 //specularcontext.fillStyle="#"+material.specular.getHexString();
                 //specularcontext.fillRect(0,0,specularcanvas.width, specularcanvas.height);
-                sTextureContext.fillStyle="#171717";
-                sTextureContext.fillRect(0,0,sTextureCanvas.width, sTextureCanvas.height);
+                //sTextureContext.fillStyle="#171717";
+                // sTextureContext.fillRect(0,0,sTextureCanvas.width, sTextureCanvas.height);
                 mSpecularMapColorBut.dom.click();
             }
             if(material.bumpScale!==undefined){
@@ -996,13 +1000,15 @@ var Material = function (editor) {
                 materialnormaltextureoption.dom.querySelectorAll('input')[2].value=material.normalMap.repeat.x;
                 mBumpMapNormalBut.dom.click();
             }else{
-                mBumpMapImg.dom.style.backgroundImage="";
+                //mBumpMapImg.dom.style.backgroundImage="";
                 //bumpmapcontext.fillStyle="#171717";
                 //bumpmapcontext.fillRect(0,0,specularcanvas.width, specularcanvas.height);
-                bMapTextureContext.fillStyle="#171717";
-                bMapTextureContext.fillRect(0,0,bMapTextureCanvas.width, bMapTextureCanvas.height);
-                nMapTextureContext.fillStyle="#171717";
-                nMapTextureContext.fillRect(0,0,nMapTextureCanvas.width, nMapTextureCanvas.height);
+                // bMapTextureContext.fillStyle="#171717";
+                //bMapTextureContext.fillRect(0,0,bMapTextureCanvas.width, bMapTextureCanvas.height);
+                //nMapTextureContext.fillStyle="#171717";
+                //nMapTextureContext.fillRect(0,0,nMapTextureCanvas.width, nMapTextureCanvas.height);
+                materialbumptextureoption.dom.querySelector('div').click();
+                materialnormaltextureoption.dom.querySelector('div').click();
             }
             if(material.alphaMap!==undefined&&material.alphaMap!==null){
                 mAlphaMapImage.dom.style.backgroundImage= "url(" + material.alphaMap.image.src+ ")";
@@ -1013,11 +1019,12 @@ var Material = function (editor) {
                 mAlphaTextureOption.dom.querySelectorAll('input')[1].value=material.alphaMap.offset.width;
                 mAlphaTextureOption.dom.querySelectorAll('input')[2].value=material.alphaMap.repeat.x;
             }else{
-                mAlphaMapImage.dom.style.backgroundImage="";
+                mAlphaTextureOption.dom.querySelector('div').click();
+                //mAlphaMapImage.dom.style.backgroundImage="";
                 //alphacontext.fillStyle="#171717";
                 //alphacontext.fillRect(0,0,alphacanvas.width,alphacanvas.height);
-                mAlphaTextureContext.fillStyle="#171717";
-                mAlphaTextureContext.fillRect(0,0,mAlphaTextureCanvas.width, mAlphaTextureCanvas.height);
+                // mAlphaTextureContext.fillStyle="#171717";
+                // mAlphaTextureContext.fillRect(0,0,mAlphaTextureCanvas.width, mAlphaTextureCanvas.height);
             }
             if(material.opacity!==undefined){
                 materialalphamaprange.setValue(material.opacity*100);
@@ -1032,11 +1039,12 @@ var Material = function (editor) {
                 mEmissiveMapOption.dom.querySelectorAll('input')[2].value=material.emissiveMap.repeat.x;
                 mEmissiveTextureBut.dom.click();
             }else if(material.emissive!==undefined){
-                mEmissiveImage.dom.style.backgroundImage ="";
+                mEmissiveMapOption.dom.querySelector('div').click();
+                // mEmissiveImage.dom.style.backgroundImage ="";
                 //emissivecontext.fillStyle='#'+material.emissive.getHexString();
                 //emissivecontext.fillRect(0,0,emissivecanvas.width, emissivecanvas.height);
-                mEmissiveTextureContext.fillStyle='#'+material.emissive.getHexString();
-                mEmissiveTextureContext.fillRect(0,0,mEmissiveTextureCanvas.width,  mEmissiveTextureCanvas.height);
+                // mEmissiveTextureContext.fillStyle='#'+material.emissive.getHexString();
+                // mEmissiveTextureContext.fillRect(0,0,mEmissiveTextureCanvas.width,  mEmissiveTextureCanvas.height);
                 mEmissiveColorBut.dom.click();
             }
             if(material.emissive!==undefined){
