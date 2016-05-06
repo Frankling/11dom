@@ -250,8 +250,15 @@ Menubar.light = function ( editor ) {
 
     $(targetX.dom).on("input change",function(){
         try{
-            editor.scene.getObjectByName(Attr_Header.dom.innerHTML).children[1].target.position.x =Number(targetX.dom.value);
-            editor.scene.getObjectByName(Attr_Header.dom.innerHTML).children[1].target.updateMatrixWorld();
+            var select=editor.selected;
+            for (var i in select){
+                if(select[i] instanceof THREE.LightObject){
+                    console.log( select[i].target)
+                    select[i].children[1].target.position.x =Number(targetX.dom.value);
+                    select[i].children[1].target.updateMatrixWorld();
+                }
+            }
+
             editor.signals.selectTransform.dispatch();
             editor.signals.sceneGraphChanged.dispatch();
 
@@ -358,6 +365,7 @@ Menubar.light = function ( editor ) {
                 decayRange.setValue(object.children[1].decay*100);
             }else if(!(object.children[1] instanceof THREE.AmbientLight)){
                 light_Target.dom.style.display="block";
+
                 targetX.setValue(object.children[1].target.position.x);
                 targetY.setValue(object.children[1].target.position.y);
                 targetZ.setValue(object.children[1].target.position.z);

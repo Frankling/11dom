@@ -199,7 +199,7 @@ var Tool= function ( editor ) {
         console.log(scene)
        //var scene1= JSON.stringify(scene);
         //var scene1= JSON.stringify(scene);
-        gz.enGz(scene,function(dd) {
+        /*gz.enGz(scene,function(dd) {
            console.log('压缩后：'+ (dd.length/1024/1024) + 'Mb');
 
             saveAs(new Blob([dd]  ,{type: "Int8Array"}),"scene.json");
@@ -208,15 +208,16 @@ var Tool= function ( editor ) {
 
             console.log( (a*100|0) + '%');
 
-        });
+        });*/
 
-
+        var scene1= JSON.stringify(scene);
         var sceneBG = editor.planbox.toJSON();
         var sceneBG1= JSON.stringify(sceneBG);
         var sceneGlobal = editor.skybox.toJSON();
         var sceneGlobal1= JSON.stringify(sceneGlobal );
         var data1= JSON.stringify(dataBase);
 
+        saveAs(new Blob([scene1]  ,{type: "text/plain;charset=utf-8"}),"scene.json");
         saveAs(new Blob([sceneGlobal1]  ,{type: "text/plain;charset=utf-8"}),"sceneGlobal.json");
         saveAs(new Blob([sceneBG1]  ,{type: "text/plain;charset=utf-8"}),"sceneBG.json");
         saveAs(new Blob([data1]  ,{type: "text/plain;charset=utf-8"}),"dataBase.json");

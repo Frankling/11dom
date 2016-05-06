@@ -24,8 +24,11 @@
                     editor.controls.maxPolarAngle =Math.PI -(atr2[0] * Math.PI / 200);
                 }
                 if(atr3[1]){
+                    editor.controls.removeEventListener('change',editor.RenderLoop,false);
                     editor.controls.enableDamping=true;
                     editor.controls.dampingFactor = atr3[0]/200;
+                    editor.requestLoop=true;
+                    editor.RenderLoop();
                 }
             }
             if(dataBase.controls.type=="2"){
@@ -156,7 +159,7 @@
             dataBase=JSON.parse(text);
             loadEndV[1]=true;
             loadEnd();
-         //   _initTHREE.initGlobalControls();
+            _initTHREE.initGlobalControls();
             _initTHREE.initBackground();
             _initTHREE.initComposer();
             _initTHREE.initAmbientLight();
