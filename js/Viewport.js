@@ -37,7 +37,7 @@ var Viewport=function(editor){
         editor.controls.update();
     });
 
-    var transformControls=new THREE.MyTransformControls(editor.camera,container.dom);
+    var transformControls=new THREE.MyTransformControls(editor.camera,canvas);
 
     transformControls.addEventListener("change",function(){
 
@@ -53,13 +53,13 @@ var Viewport=function(editor){
     canvas.addEventListener("mousedown",onMouseDown,false);
 
     window.addEventListener( 'resize', onWindowResize, false );
-    var labelSelected;
-    var downType;
-    var time;
+   // var labelSelected;
+    var isLabelSelect;
+    var isDoubleClick;
     var oldTime;
     function onMouseDown(event){
         event.preventDefault();
-        if(oldTime) time= new Date().getTime()-oldTime;
+        if(oldTime) isDoubleClick= (new Date().getTime()-oldTime)<300;
 
 
         var button=event.button;
@@ -67,44 +67,35 @@ var Viewport=function(editor){
         if(button==0) {
 
             if (intersects.length > 0 && !transformControls.hasIntersect) {
-
-                //transformControls.hasIntersect=false;
                 editor.select(intersects[0].object);
-                if(editor.labels.hasOwnProperty(  intersects[0].object.uuid)){
-                    labelSelected= intersects[0].object;
-                    if(time<300){
-                        if(labelSelected.cameraPosition){
-                            editor.camera.position.x= labelSelected.cameraPosition.PX;
-                            editor.camera.position.y= labelSelected.cameraPosition.PY;
-                            editor.camera.position.z= labelSelected.cameraPosition.PZ;
-                            editor.controls.target.x= labelSelected.cameraPosition.TX;
-                            editor.controls.target.y= labelSelected.cameraPosition.TY;
-                            editor.controls.target.z= labelSelected.cameraPosition.TZ;
-                            editor.controls.update();
-                            editor.signals.labelChange.dispatch();
-                          //  editor.signals.sceneGraphChanged.dispatch();
+                if(intersects[0].object.hasOwnProperty("cameraPosition")){
+                    if(isDoubleClick){
+                        updateLabelCamera(intersects[0].object,isDoubleClick);
+                        var labels=editor.labels;
+                        for(var i in labels){
+                            updateNowPosition(editor,labels[i]);
                         }
-
                     }
+                    isLabelSelect=true;
                 }
+
 
             }
         }else if(button==2){
             editor.selectClear();
             $(".selected").removeClass("selected");
-            // transformControls.hasIntersect=false;
+            transformControls.hasIntersect=false;
             editor.signals.sceneGraphChanged.dispatch();
 
         }
-
 
         container.dom.addEventListener("mousemove",onMouseMove,false);
         container.dom.addEventListener("mouseup",onMouseUp,false);
         oldTime=new Date().getTime();
     }
-    editor.signals.addLabel.add(function(label){
+/*    editor.signals.addLabel.add(function(label){
        objects.push(label);
-    });
+    });*/
     function onMouseMove(event){
         event.preventDefault();
         var button=event.button;
@@ -114,18 +105,47 @@ var Viewport=function(editor){
         for(var i=0;i<intersects.length;i++){
 
             if(intersects[i].object instanceof THREE.Mesh){
+                var parent=intersects[i].object;
                 var point=intersects[i].point;
             }
 
         }
 
-        if(point&&labelSelected){
+        var selected=editor.selected;
+        var labels=editor.labels;
+        var bool;
+        if(isLabelSelect){
+            for(var i in selected){
+
+                if(point&&labels.hasOwnProperty( i)){
+                    if(parent== labels[i].parent){
+                        var offset=new THREE.Vector3().copy(labels[i].getWorldPosition()).sub(point);
+                        var camera=editor.camera;
+                        var distance=point.distanceTo(camera.position);
+                        var realy=new THREE.Vector3(camera.position.x/distance,camera.position.y/distance,camera.position.z/distance);
+                        labels[i].position.sub(offset).add(realy);
+                        bool=true;
+                        editor.signals.sceneGraphChanged.dispatch();
+                    }
+
+                }
+
+            }
+            if(bool){
+                editor.controls.enabled=!bool;
+
+                signals.selectTransform.dispatch();
+            }
+            $(".label2d").css("pointer-events","none");
+        }
+
+ /*       if(point&&labelSelected){
             editor.controls.enabled=false
             var offset=new THREE.Vector3().copy(labelSelected.getWorldPosition()).sub(point);
             labelSelected.position.sub(offset);
             signals.selectTransform.dispatch();
             signals.sceneGraphChanged.dispatch();
-        }
+        }*/
 
 
 
@@ -137,7 +157,8 @@ var Viewport=function(editor){
     function onMouseUp(event){
         event.preventDefault();
         editor.controls.enabled=true;
-        labelSelected=undefined;
+        isLabelSelect=false;
+        $(".label2d").css("pointer-events","visible");
         container.dom.removeEventListener("mousedown",onMouseDown,false);
         container.dom.removeEventListener("mousemove",onMouseMove,false);
     }
@@ -155,7 +176,15 @@ var Viewport=function(editor){
         //editor.signals.sceneGraphChanged.dispatch();
     }
     function render() {
+        var labels=editor.labels;
+        for(var i in labels){
 
+            var point=labels[i].getWorldPosition();
+            var point2d=new THREE.Vector3().copy(point);
+            projector.projectVector(point2d,editor.camera);
+           // console.log(labels[i].parent)
+            updateLabelPosition(labels[i],container.dom,point,point2d);
+        }
         if(Object.keys(editor.traceCamera).length) trace();
         sceneHelpers.updateMatrixWorld();
         scene.updateMatrixWorld();
@@ -184,7 +213,7 @@ var Viewport=function(editor){
 
     }
     function addenvMap(material,mappings){
-        var images=[];
+       var images=[];
         var type=mappings;
         var texture=new THREE.CubeTexture();
         var materials=editor.skybox.material.materials;
@@ -203,6 +232,7 @@ var Viewport=function(editor){
         texture.needsUpdate=true;
         editor.signals.sceneGraphChanged.dispatch();
 
+
     }
 
     signals.envmappingChange.add(function(material,mappings){
@@ -216,8 +246,10 @@ var Viewport=function(editor){
         return intersects;
     };
 
-    signals.labelChange.add( function (object ) {
+    /*signals.labelChange.add( function (object ) {
         var labels=editor.labels;
+        if($(".labelBody")[0])  var topDiv=parseInt($(".labelBody")[0].style.height);
+
         for(var i in labels){
             var position=labels[i].getWorldPosition();
 
@@ -232,30 +264,23 @@ var Viewport=function(editor){
             var boolLine=child.style.display;
             if(boolLine=="none"){
                 document.getElementById(i+"V").style.left= left+5+"px";
-                document.getElementById(i+"V").style.top= top-17+"px";
+                document.getElementById(i+"V").style.top=  top - 10-topDiv/2 + "px";
             }else{
                 var height=parseFloat(child.style.height);
-                document.getElementById(i+"V").style.left= left+5+"px";
-                document.getElementById(i+"V").style.top= top-40-height+"px";
+                document.getElementById(i+"V").style.left= left + 5 + "px";
+                document.getElementById(i+"V").style.top= top - 20 - topDiv - height + "px";
 
             }
 
         }
 
-    } );
+    } );*/
     signals.selectChanged.add( function (object ) {
-        if(editor.labels.hasOwnProperty(object.uuid)){
+      if(editor.labels.hasOwnProperty(object.uuid)){
             editor.signals.sceneGraphChanged.dispatch();
             return
         }
         transformControls.attach(editor.selected);
-        if(object instanceof THREE.LightObject){
-            $(".side_panel").css("display","none");
-            $(".title")[1].click();
-        }else{
-            $(".side_panel").css("display","none");
-            $(".title")[0].click();
-        }
         editor.sceneHelpers.add(transformControls);
         editor.signals.sceneGraphChanged.dispatch();
 
@@ -281,7 +306,7 @@ var Viewport=function(editor){
 
     } );
     signals.cameraChanged.add( function () {
-        signals.labelChange.dispatch();
+       /* signals.labelChange.dispatch();*/
 
         render();
 
@@ -290,7 +315,7 @@ var Viewport=function(editor){
         editor.camera.aspect = container.dom.offsetWidth / container.dom.offsetHeight;
         editor.camera.updateProjectionMatrix();
         renderer.setSize( container.dom.offsetWidth, container.dom.offsetHeight );
-        signals.labelChange.dispatch();
+     /*   signals.labelChange.dispatch();*/
         render();
 
     } );
@@ -300,7 +325,7 @@ var Viewport=function(editor){
 
     } );
     signals.selectTransform.add(function(mode){
-        signals.labelChange.dispatch();
+       /* signals.labelChange.dispatch();*/
 
         if(mode!==undefined){
             transformControls.setMode(mode);
@@ -330,12 +355,12 @@ var Viewport=function(editor){
         object.traverse( function ( child ) {
             if(child instanceof  THREE.Mesh||child instanceof  THREE.Sprite){
 
-                    for(var i=0;i<child.children.length;i++){
+                 /*   for(var i=0;i<child.children.length;i++){
                         var id=child.children[i].uuid;
                         delete editor.labels[id];
                         document.getElementById("viewport").removeChild(document.getElementById(id+"V"));
                         document.getElementById("labelContent").removeChild(document.getElementById(id));
-                    }
+                    }*/
 
                 if(child.geometry){
                     child.geometry.dispose();
@@ -352,6 +377,12 @@ var Viewport=function(editor){
         var id = object.uuid;
         $("#"+id).remove();
     });
+    editor.signals.addLabel.add(function(label){
+        objects.push(label);
+    });
+    editor.signals.removeLabel.add(function(label){
+        objects.remove(label);
+    });
 
     return container;
-}
+};

@@ -142,6 +142,9 @@ var updateLabelsAtt=function (parameters){
         obj.title=parameters.title;
         document.getElementById(obj.uuid+"V").children[0].children[0].value=parameters.title;
     }
+    if(!obj.hasOwnProperty("cameraPosition")){
+        obj.cameraPosition=undefined;
+    }
     if(parameters.cameraPosition!==undefined)obj.cameraPosition=parameters.cameraPosition;
 };
 var updateNowPosition=function(editor,obj){

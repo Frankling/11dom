@@ -24,11 +24,8 @@
                     editor.controls.maxPolarAngle =Math.PI -(atr2[0] * Math.PI / 200);
                 }
                 if(atr3[1]){
-                    editor.controls.removeEventListener('change',editor.RenderLoop,false);
                     editor.controls.enableDamping=true;
                     editor.controls.dampingFactor = atr3[0]/200;
-                    editor.requestLoop=true;
-                    editor.RenderLoop();
                 }
             }
             if(dataBase.controls.type=="2"){
@@ -103,8 +100,9 @@
             AmbientLight.intensity=dataBase.AmbientLight.intensity;
         };
         this.initLabel=function(){
-
+             //   console.log(editor.allObject3D)
                 editor.allObject3D.traverse(function(child){
+                //    console.log(child);
                     if(dataBase.labels.hasOwnProperty(child.uuid)){
 
                         var i=child.uuid;
@@ -114,7 +112,9 @@
                        var cssType=dataBase.labels[i].cssType;
                        var cameraPosition=dataBase.labels[i].cameraPosition;
                        createLabel(editor,document.getElementById("viewport"),editor.camera,undefined,child.getWorldPosition(),child);
-                        updateLabelsAtt({obj:child,cssType:cssType,enableLine:enableLine,lineHeight:lineHeight,title:title,cameraPosition:cameraPosition});
+                       updateLabelsAtt({obj:child,cssType:cssType,enableLine:enableLine,lineHeight:lineHeight,title:title,cameraPosition:cameraPosition});
+                       updateNowPosition(editor,child);
+                        console.log(child);
                     }
 
                 },true)
@@ -122,14 +122,7 @@
 
     };
     (function(){
-        var loadEndV=[false,false];
-        var loadEnd=function(){
-            if(loadEndV[0]&&loadEndV[1]){
 
-                _initTHREE.initTraceCamera();
-                _initTHREE.initLabel();
-            }
-        };
         var _initTHREE=new initTHREE(editor);
         var loader = new THREE.XHRLoader();
         loader.load(sceneFile, function ( text ) {
@@ -148,8 +141,7 @@
               // var date3=date2.getTime()-date1.getTime()
                // console.log(date3)
             editor.fromJSON( JSON.parse(text),editor.scene) ;
-            loadEndV[0]=true;
-            loadEnd();
+
             editor.signals.sceneGraphChanged.dispatch();
             //})
 
@@ -157,8 +149,8 @@
         });
         loader.load(dataBaseFile, function ( text ) {
             dataBase=JSON.parse(text);
-            loadEndV[1]=true;
-            loadEnd();
+            editor.loadEndV[0]=true;
+            editor.loadEnd();
             _initTHREE.initGlobalControls();
             _initTHREE.initBackground();
             _initTHREE.initComposer();

@@ -82,7 +82,7 @@ var Editor = function () {
     this.requestLoop = false;
     this.traceCamera={};
     this.rcube=new THREE.CubeTextureLoader().load(["rcube/1_BK.jpg","rcube/1_DN.jpg","rcube/1_FR.jpg","rcube/1_LF.jpg","rcube/1_RT.jpg","rcube/1_UP.jpg"]);
-
+    this.loadEndV=[false,false];
 
 
 
@@ -197,6 +197,7 @@ Editor.prototype = {
 
 
         }
+
         if(this.allObject3D.length>0){
 
             this.centerObject(this.allObject3D);
@@ -206,6 +207,15 @@ Editor.prototype = {
         this.signals.sceneGraphChanged.dispatch();
 
     },
+    loadEnd:function(){
+        var _initTHREE=new initTHREE(this);
+         if(this.loadEndV[0]&&this.loadEndV[1]){
+
+             _initTHREE.initTraceCamera();
+             _initTHREE.initLabel();
+
+         }
+    },
     fromJSON: function ( json ,parent) {
 
         var loader = new THREE.ObjectLoader();
@@ -214,6 +224,8 @@ Editor.prototype = {
         if ( json.scene === undefined ) {
             loader.parse( json ,function(object){
                 scope.setScene( object,parent );
+                scope.loadEndV[1]=true;
+                scope.loadEnd();
             });
 
             return;
