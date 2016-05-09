@@ -866,6 +866,11 @@ html, body {
     position:absolute;
     z-index: 200;
 }
+.label2dCanvas{
+    width:100px;
+    height:50px;
+
+}
 .labelHead{
     width: 80px;
     height: 20%;
@@ -877,12 +882,19 @@ html, body {
 .labelBody{
 
     width:  180px;
-    height: 100%;
+    height: 17px;
     opacity: 0.8;
     padding: 10px;
     color: #e4e2e1;
     border-radius: 7px;
     background: #232323;
+}
+.labelBody textarea{
+    color: #e4e2e1;
+    width: 180px;
+    height: 17px;
+    background:transparent;
+    border-style:none
 }
 .editorBg {
     width: 100%;

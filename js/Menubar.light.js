@@ -253,7 +253,6 @@ Menubar.light = function ( editor ) {
             var select=editor.selected;
             for (var i in select){
                 if(select[i] instanceof THREE.LightObject){
-                    console.log( select[i].target)
                     select[i].children[1].target.position.x =Number(targetX.dom.value);
                     select[i].children[1].target.updateMatrixWorld();
                 }

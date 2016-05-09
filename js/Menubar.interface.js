@@ -14,9 +14,10 @@ Menubar.interface = function ( editor ) {
     label2d.setClass("label2d");
    // var labelHead= new UI.createDiv('labelHead',label2d);
     var labelBody=new UI.createDiv('labelBody',label2d);
-    var labelBodyI=new UI.createDiv('',labelBody,"un","i");
+    var labelBodyI=new UI.createDiv('',labelBody,"un","t");
     var drawLine=function(){
         var lineDiv=document.createElement("canvas");
+        lineDiv.className="label2dCanvas";
         lineDiv.style.display="none";
         lineDiv.style.height="50px";
         lineDiv.style.width="100px";
@@ -106,6 +107,9 @@ Menubar.interface = function ( editor ) {
     listContent.dom.addEventListener("mousedown",listDown,false);
 
     var addLabelFun=function(e){
+        var bool=$(".label2d canvas").css("display")=="none";
+        var labels=editor.labels;
+        var type=materialClass.dom.selectedIndex==0?false:true;
         var button=e.button;
         document.body.style.cursor="points";
         if(button==0){
@@ -121,7 +125,7 @@ Menubar.interface = function ( editor ) {
                 intersects[0].object.add(sprite);
 
                 if(!editor.labels[sprite.uuid]) editor.labels[sprite.uuid]=sprite;
-                editor.refreshLabelUI(sprite,true);
+                editor.refreshLabelUI(sprite,bool,"",type,0);
               //var _div=label2d.dom.cloneNode(true);
               //_div.appendChild(drawLine());
               //var top= e.offsetY;//-(v.y-1)/2*parseInt($(document.getElementById("viewport")).css("height"))-190;
@@ -220,27 +224,39 @@ Menubar.interface = function ( editor ) {
         document.addEventListener("mousedown",cancelAddLabel,false);
     });
 
-    editor.signals.refreshLabelUI.add(function(label,bool,title){
+    editor.signals.refreshLabelUI.add(function(label,bool,title,type,length){
+
         var _div = label2d.dom.cloneNode(true);
+        if(type){
+            _div.children[0].style.height="100px";
+        }else{
+            _div.children[0].style.height="17px";
+        }
         _div.appendChild(drawLine());
         _div.id=label.uuid+"V";
         var v = new THREE.Vector3().copy(label.getWorldPosition());
         projector.projectVector(v, editor.camera);
         var left = ( v.x + 1) / 2 * viewport.offsetWidth;
         var top = ( -v.y + 1) / 2 * viewport.offsetHeight;
+
+        var topDiv=parseInt(_div.children[0].style.height);
         if (bool) {
+            bgBox.setClass("OffButton");
 
             _div.style.left = left + 5 + "px";
-            _div.style.top = top - 17 + "px";
+            _div.style.top = top - 10-topDiv/2 + "px";
 
         } else {
+
+            bgBox.setClass("onButton");
             var width=parseFloat(_div.children[1].style.width);
             _div.children[0].style.marginLeft=width+"px";
-            var height = parseFloat(dataBase.labels[label.uuid].lineValue);
             _div.children[1].style.display="block";
-            _div.style.left = left + 5 + "px";
-            _div.style.top = top - 40 - height + "px";
 
+            var height = length;
+            _div.style.left = left + 5 + "px";
+            _div.style.top = top -20- topDiv - height + "px";
+           // console.log( $(".label2d canvas"))
         }
         var list=new UI.createDiv("listOfObject3D",listContent,label.uuid);
         list.setId(label.uuid);
@@ -263,24 +279,38 @@ Menubar.interface = function ( editor ) {
     new UI.createDiv('text',bgPic,'线条');
     var bgBox = new UI.createDiv('OffButton',bgPic);
     bgBox.onClick(function(){
+        if (bgBox.dom.className === "OffButton") {
+            bgBox.setClass("onButton");
+            $(".label2d canvas").css("display","block");
+        } else {
+            bgBox.setClass("OffButton");
+            $(".label2d canvas").css("display","none");
+        }
 
-       // var child=document.getElementById(selected.uuid+"V");
-        var height=parseFloat( $(".label2d div").css("height"));
-        var heightChild=parseFloat( $(".label2d").css("top"));
+        var labels=editor.labels;
+        var width= parseFloat($(".label2d canvas").css("width"));
+        for(var i in labels){
+            var child=document.getElementById(i+"V");
+            var height=parseFloat(child.children[1].style.height);
+            var position=labels[i].getWorldPosition();
+            var v=new THREE.Vector3().copy( position);
+            projector.projectVector( v, editor.camera);
+            var left=( v.x+1)/2*viewport.offsetWidth;
+            var top=( -v.y+1)/2*viewport.offsetHeight;
+            var topDiv=parseInt($(".labelBody")[0].style.height);
             if (bgBox.dom.className === "OffButton") {
-                     bgBox.setClass("onButton");
-                     var width=parseFloat($(".label2d canvas").css("width"));
-                     $(".label2d").css("top",heightChild-height-23+"px")
-                     $(".label2d canvas").css("display","block");
-                     $(".label2d div").css("marginLeft",width);
+                child.style.top =top - 10-topDiv/2 + "px";
+                $(".label2d div").css("marginLeft","0px");
+            }else{
+                child.style.top =top - 20 - topDiv - height + "px";
+                $(".label2d div").css("marginLeft",width);
 
-            } else {
-
-                    $(".label2d").css("top",heightChild+height+23+"px")
-                    $(".label2d canvas").css("display","none");
-                    $(".label2d div").css("marginLeft","0px");
-                    bgBox.setClass("OffButton");
             }
+
+        }
+
+
+
 
     });
 
@@ -290,24 +320,34 @@ Menubar.interface = function ( editor ) {
     rDampingFactorRange.dom.value="0";
     $(rDampingFactorRange.dom).on("input change",function(){
         rDampingFactorValue.setValue(rDampingFactorRange.dom.value);
-        if(selected){
-            if(bgBox.dom.className === "onButton"){
-                var child=document.getElementById(selected.uuid+"V");
+        var labels=editor.labels;
+        if($(".label2d canvas").css("display")=="block"){
+            for(var i in labels){
+                var child=document.getElementById(i+"V");
+
                 var width=parseFloat(child.children[1].style.width);
                 var height=parseFloat(child.children[1].style.height);
-                var position=selected.getWorldPosition();
+                var position=labels[i].getWorldPosition();
                 var v=new THREE.Vector3().copy( position);
                 projector.projectVector( v, editor.camera);
                 var top=( -v.y+1)/2*viewport.offsetHeight;
-                child.style.top=top-this.value-40+"px";
+
 
                 child.children[1].style.height=this.value+"px";
                 child.children[1].style.width=this.value*2+"px";
-              //  child.children[0].style.marginLeft=width+"px";
                 child.children[0].style.marginLeft=width+"px";
+                child.children[0].style.marginLeft=width+"px";
+                var topDiv=parseInt($(".labelBody")[0].style.height);
+                child.style.top=top - 20 - topDiv  -this.value+ "px";
             }
 
         }
+
+
+
+
+
+
 
     });
     var rDampingFactorValue = new UI.createDiv('value',bgPic,null,'i');
@@ -331,12 +371,28 @@ Menubar.interface = function ( editor ) {
     var materialLibrary = new UI.createDiv('attrRow',bgContentGlobal);
     new UI.createDiv('text',materialLibrary,'类型');
 
+
+    var changeType=function(){
+
+        var value=this.dom.selectedIndex;
+        switch (value){
+            case 0:
+                $(".labelBody").css("height","17px");
+             //   $(".labelBody").css("margin-top","0px");
+                break;
+            case 1:
+                $(".labelBody").css("height","100px");
+             //   $(".labelBody").css("margin-top","-83px");
+                break;
+        }
+
+    };
     var materialClass = new UI.createDiv('selectBox',materialLibrary,null,'s');
     materialClass.dom.style.width="215px"
     materialClass.setOptions( {
-        'MeshLambertMaterial': '网格朗伯材质',
-        'MeshPhongMaterial': '网格Phong材质',
-    } ).setValue('MeshStandardMaterial')
+        'standard': '标准',
+        'leval': '升级',
+    } ).setValue('standard').onChange(changeType);
 
     //attrChild2
     var bgAttrPart = new UI.createDiv('',attributeList);
@@ -381,6 +437,13 @@ Menubar.interface = function ( editor ) {
     new UI.createDiv('text',libelTitle,'标题');
     var titleText=new UI.createDiv('labelTitle',libelTitle,undefined,"i").setValue("");
     $(titleText.dom).on("input change",function(){
+       var labels=editor.labels;
+       for(var i in labels){
+           var point=labels[i].getWorldPosition();
+           var point2d=new THREE.Vector3().copy(point);
+           projector.projectVector(point2d,editor.camera);
+           updateLabelPosition(labels[i],viewport,point,point2d);
+       }
        if(selected)document.getElementById(selected.uuid+"V").children[0].children[0].value=this.value;
     });
 

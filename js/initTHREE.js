@@ -103,23 +103,23 @@
             AmbientLight.intensity=dataBase.AmbientLight.intensity;
         };
         this.initLabel=function(){
-            for(var i in dataBase.labels){
 
                 editor.allObject3D.traverse(function(child){
-                    if(child.uuid==i){
+                    if(dataBase.labels.hasOwnProperty(child.uuid)){
 
-                        editor.labels[i]=child;
-                        child.cameraPosition= dataBase.labels[child.uuid].cameraPosition;
-                        var bool=dataBase.labels[child.uuid].enableLine == "none" ?true:false;
-                        var title=dataBase.labels[child.uuid].title;
-                        editor.refreshLabelUI(child,bool,title);
-
+                        var i=child.uuid;
+                       var enableLine=dataBase.labels[i].enableLine;
+                       var lineHeight=dataBase.labels[i].lineHeight;
+                       var title=dataBase.labels[i].title;
+                       var cssType=dataBase.labels[i].cssType;
+                       var cameraPosition=dataBase.labels[i].cameraPosition;
+                       createLabel(editor,document.getElementById("viewport"),editor.camera,undefined,child.getWorldPosition(),child);
+                        updateLabelsAtt({obj:child,cssType:cssType,enableLine:enableLine,lineHeight:lineHeight,title:title,cameraPosition:cameraPosition});
                     }
 
                 },true)
             }
 
-        };
     };
     (function(){
         var loadEndV=[false,false];
@@ -133,25 +133,25 @@
         var _initTHREE=new initTHREE(editor);
         var loader = new THREE.XHRLoader();
         loader.load(sceneFile, function ( text ) {
-            var t=text;
-            var l=t.split(",");
-            console.log(l)
-            var haha=[];
-            for(var i=0;i<l.length;i++){
-                haha.push(parseInt(l[i]))
-            }
+         //  var t=text;
+         //  var l=t.split(",");
+         //  console.log(l)
+         //  var haha=[];
+         //  for(var i=0;i<l.length;i++){
+         //      haha.push(parseInt(l[i]))
+         //  }
 
-            var date1=new Date();  //开始时间
+           // var date1=new Date();  //开始时间
 
-            gz.unGz(haha,function(a){
-                var date2=new Date();    //结束时间
-                var date3=date2.getTime()-date1.getTime()
-                console.log(date3)
-                editor.fromJSON(a,editor.scene) ;
-                loadEndV[0]=true;
-                loadEnd();
-                editor.signals.sceneGraphChanged.dispatch();
-            })
+          //  gz.unGz(haha,function(a){
+              // var date2=new Date();    //结束时间
+              // var date3=date2.getTime()-date1.getTime()
+               // console.log(date3)
+            editor.fromJSON( JSON.parse(text),editor.scene) ;
+            loadEndV[0]=true;
+            loadEnd();
+            editor.signals.sceneGraphChanged.dispatch();
+            //})
 
 
         });

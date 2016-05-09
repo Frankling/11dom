@@ -21,7 +21,7 @@ var Tool= function ( editor ) {
     toolMove.dom.style.backgroundImage="url('image/toolmove.png')";
     toolMove.onClick(function(){
         editor.signals.selectTransform.dispatch( "translate");
-        //        点击后更改绿色背景颜色
+        //        点击后更改绿色背景颜�
         for(var i=0;i<this.dom.parentNode.childNodes.length;i++){
             this.dom.parentNode.childNodes[i].style.backgroundColor="#343434";
         }
@@ -35,7 +35,7 @@ var Tool= function ( editor ) {
     toolRotate.dom.style.backgroundImage="url('image/toolRotate.png')";
     toolRotate.onClick(function(){
         editor.signals.selectTransform.dispatch( "rotate");
-        //      点击后更改绿色背景颜色
+        //      点击后更改绿色背景颜�
         for(var i=0;i<this.dom.parentNode.childNodes.length;i++){
             this.dom.parentNode.childNodes[i].style.backgroundColor="#343434";
         }
@@ -50,7 +50,7 @@ var Tool= function ( editor ) {
 
     toolScale.onClick(function(){
         editor.signals.selectTransform.dispatch( "scale");
-        //        点击后更改绿色背景颜色
+        //        点击后更改绿色背景颜�
         for(var i=0;i<this.dom.parentNode.childNodes.length;i++){
 
             this.dom.parentNode.childNodes[i].style.backgroundColor="#343434";
@@ -66,7 +66,7 @@ var Tool= function ( editor ) {
 
     toolCenter.onClick(function(){
         editor.resetAxis();
-        //        点击后更改绿色背景颜色
+        //        点击后更改绿色背景颜�
         for(var i=0;i<this.dom.parentNode.childNodes.length;i++){
             this.dom.parentNode.childNodes[i].style.backgroundColor="#343434";
         }
@@ -83,7 +83,7 @@ var Tool= function ( editor ) {
 
         editor.Grid.visible=!editor.Grid.visible;
         editor.signals.sceneGraphChanged.dispatch();
-        //        点击后更改绿色背景颜色
+        //        点击后更改绿色背景颜�
         for(var i=0;i<this.dom.parentNode.childNodes.length;i++){
             this.dom.parentNode.childNodes[i].style.backgroundColor="#343434";
         }
@@ -152,9 +152,10 @@ var Tool= function ( editor ) {
         for(var i in label){
             var child=document.getElementById(label[i].uuid+"V");
            dataBase.labels[i]={};
-           dataBase.labels[i].enableLine=child.children[1].style.display;
-           dataBase.labels[i].lineValue=parseInt(child.children[1].style.height);
-           dataBase.labels[i].title=child.children[0].innerHTML;
+           dataBase.labels[i].enableLine    =label[i].enableLine;
+           dataBase.labels[i].lineHeight    =label[i].lineHeight;
+           dataBase.labels[i].title          =label[i].title;
+           dataBase.labels[i].cssType        =label[i].cssType;
            dataBase.labels[i].cameraPosition=label[i].cameraPosition;
 
         }
@@ -200,16 +201,17 @@ var Tool= function ( editor ) {
        //var scene1= JSON.stringify(scene);
         //var scene1= JSON.stringify(scene);
         /*gz.enGz(scene,function(dd) {
-           console.log('压缩后：'+ (dd.length/1024/1024) + 'Mb');
+    // console.log('压缩后：'+ (dd.length/1024/1024) + 'Mb');
 
-            saveAs(new Blob([dd]  ,{type: "Int8Array"}),"scene.json");
+           // saveAs(new Blob([dd]  ,{type: "Int8Array"}),"scene.json");
 
-        },function(a){
+       //},function(a){
 
-            console.log( (a*100|0) + '%');
+       //    console.log( (a*100|0) + '%');
 
         });*/
 
+        var scene = editor.scene.toJSON();
         var scene1= JSON.stringify(scene);
         var sceneBG = editor.planbox.toJSON();
         var sceneBG1= JSON.stringify(sceneBG);
@@ -218,9 +220,9 @@ var Tool= function ( editor ) {
         var data1= JSON.stringify(dataBase);
 
         saveAs(new Blob([scene1]  ,{type: "text/plain;charset=utf-8"}),"scene.json");
-        saveAs(new Blob([sceneGlobal1]  ,{type: "text/plain;charset=utf-8"}),"sceneGlobal.json");
         saveAs(new Blob([sceneBG1]  ,{type: "text/plain;charset=utf-8"}),"sceneBG.json");
         saveAs(new Blob([data1]  ,{type: "text/plain;charset=utf-8"}),"dataBase.json");
+        saveAs(new Blob([sceneGlobal1]  ,{type: "text/plain;charset=utf-8"}),"sceneGlobal.json");
         editor.scene.add(AmbientLight);
 
     });

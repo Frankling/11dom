@@ -1155,6 +1155,9 @@ UI.createDiv=function(className,parent,content,type){
 		case "s":
 			obj = new UI.Select();
 			break;
+		case "t":
+			obj = new UI.TextArea();
+			break;
 		default :
 			obj = new UI.Panel();
 	}

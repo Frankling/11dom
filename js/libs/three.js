@@ -19094,6 +19094,8 @@ THREE.MaterialLoader.prototype = {
 		}
 
 		if ( json.reflectivity ) material.reflectivity = json.reflectivity;
+		if ( json.reflectivity ) material.refractionRatio=json.refractionRatio;
+
 
 		if ( json.lightMap !== undefined ) material.lightMap = this.getTexture( json.lightMap );
 		if ( json.lightMapIntensity !== undefined ) material.lightMapIntensity = json.lightMapIntensity;
@@ -19515,12 +19517,15 @@ THREE.ObjectLoader.prototype = {
 				}
 
 				if(data.image instanceof Array){
+
 					var imageA=data.image
+
 					var arrayImage=[];
 					for(var j=0;j<imageA.length;j++){
-						arrayImage.push( images[ data.image[i] ]);
+						arrayImage.push( images[ data.image[j] ]);
 					}
 					var texture = new THREE.CubeTexture(arrayImage);
+
 				}else{
 					var texture = new THREE.Texture( images[ data.image ] );
 				}
@@ -20295,6 +20300,7 @@ THREE.Material.prototype = {
 
 			data.envMap = this.envMap.toJSON( meta ).uuid;
 			data.reflectivity = this.reflectivity; // Scale behind envMap
+			data.refractionRatio = this.refractionRatio;
 
 		}
 
@@ -21799,8 +21805,11 @@ THREE.Texture.prototype = {
 					if ( meta.images[ image.uuid ] === undefined ) {
 
 						meta.images[ image[i].uuid ] = {
+
 							uuid: image[i].uuid,
+
 							url: getDataURL( image[i] )
+
 						};
 
 					}

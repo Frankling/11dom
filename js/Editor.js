@@ -13,9 +13,10 @@ var Editor = function () {
         cameraChanged:new SIGNALS.Signal(),
         windowResize:new SIGNALS.Signal(),
         selectClear:new SIGNALS.Signal(),
-        labelChange:new SIGNALS.Signal(),
-        refreshLabelUI:new SIGNALS.Signal(),
+        //labelChange:new SIGNALS.Signal(),
+       // refreshLabelUI:new SIGNALS.Signal(),
         addLabel:new SIGNALS.Signal(),
+        removeLabel:new SIGNALS.Signal(),
         envmappingChange:new SIGNALS.Signal(),
         initTHREE:{
             initGlobalLight:new SIGNALS.Signal(),
@@ -209,10 +210,12 @@ Editor.prototype = {
 
         var loader = new THREE.ObjectLoader();
 
-
+        var scope=this;
         if ( json.scene === undefined ) {
+            loader.parse( json ,function(object){
+                scope.setScene( object,parent );
+            });
 
-            this.setScene( loader.parse( json ),parent );
             return;
 
         }
@@ -234,9 +237,7 @@ Editor.prototype = {
     select: function ( object ) {
 
        if(object.parent instanceof THREE.LightObject)  var object=object.parent;
-     // if(this.labels.hasOwnProperty(object.uuid)){
-     //
-     // }
+
 
         var uuid=object.uuid;
         var needAddHelper=false;
@@ -501,7 +502,7 @@ Editor.prototype = {
         editor.signals.sceneGraphChanged.dispatch();
     },
     getCSS: function(obj,prop){
-
+        var propprop;
         if (obj.currentStyle) //IE
         {
             return obj.currentStyle[prop];
@@ -660,7 +661,9 @@ Editor.prototype = {
 
                 });
                 if(addChildObj&&addParentObj) {
-
+                    if(addParentObj==editor.allObject3D){
+                        addParentObj=editor.scene;
+                    }
                     addParentObj.add(addChildObj);
                 }
 
@@ -719,25 +722,25 @@ Editor.prototype = {
     CameraControls: function (ControlsNumder) {
         if (ControlsNumder == 1) {
             this.controls.dispose();
-            this.controls = new THREE.OrbitControls(editor.camera,document.getElementById("viewport"));
+            this.controls = new THREE.OrbitControls(editor.camera,document.getElementById("viewport").children[0]);
             editor.camera.fov = 45;
             editor.camera.position.set(0, 0, 1000 );
             editor.camera.lookAt( new THREE.Vector3(0,0,0) );
             editor.camera.updateProjectionMatrix();
             this.controls.addEventListener('change',function(){
-                editor.signals.labelChange.dispatch();
+             //   editor.signals.labelChange.dispatch();
                 editor.signals.sceneGraphChanged.dispatch();
             });
         }
         else if (ControlsNumder == 2) {
             this.controls.dispose();
-            this.controls = new THREE.Firstperson(editor.camera,document.getElementById("viewport"));
+            this.controls = new THREE.Firstperson(editor.camera,document.getElementById("viewport").children[0]);
             editor.camera.updateProjectionMatrix();
             this.scene.add(this.controls.getObject());
         }
         else {
             this.controls.dispose();
-            this.controls = new THREE.FlyControls(this.camera,document.getElementById("viewport"));
+            this.controls = new THREE.FlyControls(this.camera,document.getElementById("viewport").children[0]);
             editor.camera.fov = 45;
             editor.camera.position.set(0, 0, 1000 );
             editor.camera.lookAt( new THREE.Vector3(0,0,0) );
@@ -813,9 +816,9 @@ Editor.prototype = {
 
         editor.signals.sceneGraphChanged.dispatch();
     },
-    refreshLabelUI:function(label,bool,title){
+    refreshLabelUI:function(label,bool,title,type,length){
 
-        this.signals.refreshLabelUI.dispatch(label,bool,title);
+        this.signals.refreshLabelUI.dispatch(label,bool,title,type,length);
     }
 
 };
