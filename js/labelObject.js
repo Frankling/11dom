@@ -59,9 +59,12 @@ var createLabel=function(editor,viewport,camera,mesh,point,hasLabel){
     var create2DLabel=function(){
         var label2d=new UI.Panel();
         label2d.setClass("label2d");
+
         var labelBody=new UI.createDiv('labelBody',label2d);
         var labelBodyI=new UI.createDiv('',labelBody,"请输入内容","t");
         label2d.dom.appendChild( new drawLine());
+
+
         return label2d;
     }
     var merge=function(){
@@ -72,7 +75,23 @@ var createLabel=function(editor,viewport,camera,mesh,point,hasLabel){
         var realy=new THREE.Vector3(camera.position.x/distance,camera.position.y/distance,camera.position.z/distance);
         if(hasLabel==undefined)label.position.copy(new THREE.Vector3().copy(point).add(realy).sub(mesh.getWorldPosition()));
         label2d.setId(label.uuid+"V");
-       //var position=sprite.getWorldPosition();
+        label2d.onClick(function(){
+            var id=this.dom.id;
+            editor.select(label);
+        });
+
+        $(label2d.dom.children[0].children[0]).on("input change",function(){
+
+            var value=this.value;
+            var id=label2d.dom.id;
+            var l=id.length-1;
+            var str=id.substring(0,l);
+            console.log(id)
+            updateLabelsAtt({
+                obj:editor.labels[str],
+                title:value
+            });
+        });
 
         projector.projectVector(point,camera);
         var left = ( point.x + 1) / 2 * viewport.offsetWidth;

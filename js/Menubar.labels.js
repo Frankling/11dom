@@ -266,6 +266,7 @@ Menubar.labels = function ( editor ) {
         var labels=editor.labels;
         for(var i in selected){
             if(labels.hasOwnProperty( i)){
+
                 updateLabelsAtt({
                     obj:labels[i],
                     title:this.value,
