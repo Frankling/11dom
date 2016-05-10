@@ -10,7 +10,7 @@ Menubar.labels = function ( editor ) {
     var viewport=document.getElementById("viewport");
     var container = new UI.Panel().setClass('menu');
     var menuName = new UI.createDiv('title',container);
-    menuName.dom.style.backgroundImage="url('image/object.png')";
+    menuName.dom.style.backgroundImage="url('image/labelTitle.png')";
     container.add( menuName );
     menuName.onClick(function(){
         if(sidePanel.dom.style.display=="inline-block"){

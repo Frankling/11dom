@@ -354,7 +354,9 @@ var Viewport=function(editor){
     signals.objectRemove.add(function(object){
         object.traverse( function ( child ) {
             if(child instanceof  THREE.Mesh||child instanceof  THREE.Sprite){
-
+                 if(editor.labels.hasOwnProperty(child.uuid)){
+                     removeLabel(editor,child,container.dom);
+                 }
                  /*   for(var i=0;i<child.children.length;i++){
                         var id=child.children[i].uuid;
                         delete editor.labels[id];
