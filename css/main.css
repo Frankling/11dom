@@ -530,6 +530,14 @@ html, body {
     height: 100px;
     background-color: #888;
 }
+#viewport .vlogo {
+    position: absolute;
+    width:5%;
+    height: 9%;
+    background-image: url("../image/vlogo.png");
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+}
 
 /*自定义天空盒面板，确定/取消*/
 #viewport .SkyBoxSureNo {
