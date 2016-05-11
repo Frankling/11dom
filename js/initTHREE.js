@@ -114,7 +114,7 @@
                        createLabel(editor,document.getElementById("viewport"),editor.camera,undefined,child.getWorldPosition(),child);
                        updateLabelsAtt({obj:child,cssType:cssType,enableLine:enableLine,lineHeight:lineHeight,title:title,cameraPosition:cameraPosition});
                        updateNowPosition(editor,child);
-                        console.log(child);
+
                     }
 
                 },true)
@@ -155,7 +155,7 @@
             _initTHREE.initBackground();
             _initTHREE.initComposer();
             _initTHREE.initAmbientLight();
-            editor.signals.sceneGraphChanged.dispatch();
+
         });
 
         loader.load( sceneGlobalFile, function ( text ) {

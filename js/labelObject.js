@@ -109,6 +109,7 @@ var createLabel=function(editor,viewport,camera,mesh,point,hasLabel){
         editor.labels[label.uuid]=label;
         createList(editor,label);
         editor.signals.addLabel.dispatch(label);
+      //  updateScale(editor,label,point);
     })();
 
 };
@@ -178,6 +179,13 @@ var updateNowPosition=function(editor,obj){
         updateLabelPosition(obj,viewport,point,point2d)
     //}
 };
+var updateScale=function(editor,obj,point){
+    var labels=editor.labels;
+    for(var i in labels){
+        var distance=point.distanceTo(editor.camera.position);
+        labels[i].scale.x=labels[i].scale.y=labels[i].scale.z=distance/100;
+    }
+};
 var updateLabelPosition=function(obj,viewport,point,point2d){
 
     var cssType= obj.cssType;
@@ -186,7 +194,7 @@ var updateLabelPosition=function(obj,viewport,point,point2d){
     var lineHeight= obj.lineHeight;
     var cameraPosition= obj.cameraPosition;
     obj.position.copy(new THREE.Vector3().copy(point).sub(obj.parent.getWorldPosition()));
-
+    updateScale(editor,obj,point);
     var left = ( point2d.x + 1) / 2 * viewport.offsetWidth;
     var top = ( -point2d.y + 1) / 2 * viewport.offsetHeight;
 

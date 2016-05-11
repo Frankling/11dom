@@ -213,6 +213,7 @@ Editor.prototype = {
 
              _initTHREE.initTraceCamera();
              _initTHREE.initLabel();
+             editor.signals.sceneGraphChanged.dispatch();
 
          }
     },

@@ -865,6 +865,7 @@ html, body {
 
     position:absolute;
     z-index: 200;
+    pointer-events: none;
 }
 .label2dCanvas{
     width:100px;
@@ -894,7 +895,8 @@ html, body {
     width: 180px;
     height: 17px;
     background:transparent;
-    border-style:none
+    border-style:none;
+    pointer-events:visible;
 }
 .editorBg {
     width: 100%;

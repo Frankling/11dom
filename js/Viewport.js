@@ -136,7 +136,7 @@ var Viewport=function(editor){
 
                 signals.selectTransform.dispatch();
             }
-            $(".label2d").css("pointer-events","none");
+           // $(".label2d").css("pointer-events","none");
         }
 
  /*       if(point&&labelSelected){
@@ -158,7 +158,7 @@ var Viewport=function(editor){
         event.preventDefault();
         editor.controls.enabled=true;
         isLabelSelect=false;
-        $(".label2d").css("pointer-events","visible");
+        //$(".label2d").css("pointer-events","visible");
         container.dom.removeEventListener("mousedown",onMouseDown,false);
         container.dom.removeEventListener("mousemove",onMouseMove,false);
     }
