@@ -11,7 +11,9 @@ var Viewport=function(editor){
     var renderer = editor.renderer;
     renderer.autoClear=false;
     renderer.setClearColor(0x555555);
-    var canvas=renderer.domElement
+    var canvas=renderer.domElement;
+
+    var vlogo=new UI.createDiv('vlogo',container);
 
     container.dom.appendChild(renderer.domElement);
     var scene = editor.scene;
