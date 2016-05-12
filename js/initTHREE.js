@@ -111,8 +111,9 @@
                        var title=dataBase.labels[i].title;
                        var cssType=dataBase.labels[i].cssType;
                        var cameraPosition=dataBase.labels[i].cameraPosition;
+                        var display=dataBase.labels[i].display;
                        createLabel(editor,document.getElementById("viewport"),editor.camera,undefined,child.getWorldPosition(),child);
-                       updateLabelsAtt({obj:child,cssType:cssType,enableLine:enableLine,lineHeight:lineHeight,title:title,cameraPosition:cameraPosition});
+                       updateLabelsAtt({obj:child,cssType:cssType,enableLine:enableLine,lineHeight:lineHeight,title:title,cameraPosition:cameraPosition,display:display});
                        updateNowPosition(editor,child);
 
                     }
@@ -159,7 +160,6 @@
         });
 
         loader.load( sceneGlobalFile, function ( text ) {
-            
 
             var loader = new THREE.ObjectLoader();
             editor.skybox=loader.parse( JSON.parse(text) );

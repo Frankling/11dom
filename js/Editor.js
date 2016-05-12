@@ -334,6 +334,7 @@ Editor.prototype = {
     addObject: function ( object ,parent ) {
 
         var scope = this;
+        if(parent==undefined) parent=editor.scene;
         var arry=[];
         object.traverse( function ( child) {
 
@@ -735,13 +736,13 @@ Editor.prototype = {
     CameraControls: function (ControlsNumder) {
         if (ControlsNumder == 1) {
             this.controls.dispose();
-            this.controls = new THREE.OrbitControls(editor.camera,document.getElementById("viewport").children[0]);
+            this.controls = new THREE.OrbitControls(this.camera,document.getElementById("viewport").children[0]);
             editor.camera.fov = 45;
             editor.camera.position.set(0, 0, 1000 );
             editor.camera.lookAt( new THREE.Vector3(0,0,0) );
             editor.camera.updateProjectionMatrix();
             this.controls.addEventListener('change',function(){
-             //   editor.signals.labelChange.dispatch();
+
                 editor.signals.sceneGraphChanged.dispatch();
             });
         }

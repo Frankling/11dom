@@ -13,6 +13,7 @@ var createLabel=function(editor,viewport,camera,mesh,point,hasLabel){
         var sprite=new THREE.Sprite(material);
         sprite.cssType="standard";
         sprite.enableLine=false;
+        sprite.display="block";
         sprite.lineHeight=50;
         sprite.title="";
         sprite.cameraPosition=undefined;
@@ -23,10 +24,39 @@ var createLabel=function(editor,viewport,camera,mesh,point,hasLabel){
     var createList=function(editor,label){
         var list=new UI.Panel();
         list.setClass("listOfObject3D");
-        list.setTextContent(label.uuid);
+        //list.setTextContent(label.uuid);
         list.setId(label.uuid);
         list.dom.style.height="16px";
+
+
+        var child1=new UI.createDiv("labelListC1",list);
+        child1.setTextContent(label.uuid);
+        var child2=new UI.createDiv("objListEye",list);
+
+
+
         document.getElementById("labelContent").appendChild(list.dom);
+
+        child2.onClick(function(){
+            var id=this.dom.parentNode.id;
+            var div=document.getElementById(id+"V");
+            var labels=editor.labels;
+            var vie=div.style.display;
+
+
+            if(vie=="block"){
+                updateLabelsAtt({obj:labels[id],display:"none"});
+                console.log(div);
+                div.style.display="none";
+                this.dom.style.backgroundImage="url('image/eyeOpen.png')";
+
+            }else{
+                updateLabelsAtt({obj:labels[id],display:"block"});
+                div.style.display="block";
+                this.dom.style.backgroundImage="url('image/eyeClose.png')";
+            }
+        });
+
         list.onClick(function(){
 
             $(list.dom).addClass("selected");
@@ -36,8 +66,6 @@ var createLabel=function(editor,viewport,camera,mesh,point,hasLabel){
 
             e.preventDefault();
             updateLabelCamera(editor.labels[this.id],true);
-
-
         };
     };
     var drawLine=function(){
@@ -56,10 +84,12 @@ var createLabel=function(editor,viewport,camera,mesh,point,hasLabel){
         return lineDiv;
     };
 
+
+
     var create2DLabel=function(){
         var label2d=new UI.Panel();
         label2d.setClass("label2d");
-
+        label2d.dom.style.display="block";
         var labelBody=new UI.createDiv('labelBody',label2d);
         var labelBodyI=new UI.createDiv('',labelBody,"请输入内容","t");
         label2d.dom.appendChild( new drawLine());
@@ -152,6 +182,19 @@ var updateLabelsAtt=function (parameters){
         obj.cssType=parameters.cssType;
 
     }
+
+    if(parameters.display!==undefined) {
+        obj.display=parameters.display;
+        var div=document.getElementById(obj.uuid+"V");
+        if(parameters.display=="block"){
+            div.style.display="block";
+
+        }else{
+            div.style.display="none";
+            document.getElementById(obj.uuid).children[1].style.backgroundImage="url('image/eyeOpen.png')";
+        }
+    }
+
     if(parameters.enableLine!==undefined)obj.enableLine=parameters.enableLine;
     if(parameters.lineHeight!==undefined){
         obj.lineHeight=parameters.lineHeight;

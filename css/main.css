@@ -880,6 +880,11 @@ html, body {
     height:50px;
 
 }
+.labelListC1{
+    width: 200px;
+    height: 20px;
+    float: left;
+}
 .labelHead{
     width: 80px;
     height: 20%;
@@ -905,6 +910,7 @@ html, body {
     background:transparent;
     border-style:none;
     pointer-events:visible;
+    resize: none;
 }
 .editorBg {
     width: 100%;

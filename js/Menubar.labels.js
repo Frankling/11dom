@@ -214,7 +214,7 @@ Menubar.labels = function ( editor ) {
 
     //attrChild2
     var bgAttrPart = new UI.createDiv('',attributeList);
-    var bgHeaderPart = new UI.createDiv('attrHeader',bgAttrPart,'全局');
+    var bgHeaderPart = new UI.createDiv('attrHeader',bgAttrPart,'局部');
     var bgHiddenArrowPart = new UI.createDiv('attrTriPng',bgHeaderPart);
     var bgHelpPart = new UI.createDiv('attrHelp',bgHeaderPart);
     var bgContentPart = new UI.createDiv('Attr_Content',bgAttrPart);
@@ -230,6 +230,9 @@ Menubar.labels = function ( editor ) {
     });
     var getCPP = new UI.createDiv('attrRow',bgContentPart);
     var getCP=  new UI.createDiv('free-group',getCPP,'获取当前相机位置','b');
+    getCP.dom.style.marginRight="18px";
+    getCP.dom.style.width="250px";
+
     getCP.onClick(function(){
         var selected=editor.selected;
         var labels=editor.labels;
@@ -255,8 +258,7 @@ Menubar.labels = function ( editor ) {
         }
     });
 
-    getCP.dom.style.marginRight="18px";
-    getCP.dom.style.width="250px";
+
 
     var libelTitle = new UI.createDiv('attrRow',bgContentPart);
     new UI.createDiv('text',libelTitle,'标题');
@@ -281,6 +283,8 @@ Menubar.labels = function ( editor ) {
     labelContent.dom.style.width="250px";
     labelContent.dom.style.height="150px";
     labelContent.dom.style.display="none";
+
+
 
     return container;
 
