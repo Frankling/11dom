@@ -282,7 +282,7 @@ Menubar.scenarios = function (editor) {
     rDampingFactorSwitch.onClick(function(){
         if (rDampingFactorSwitch.dom.className === "OffButton") {
             rDampingFactorSwitch.setClass("onButton");
-            rDampingFactorRange.setValue(editor.controls.dampingFactor*200);
+            rDampingFactorRange.setValue(editor.controls.dampingFactor*100);
             $('input[type="range"]').trigger("input");
             editor.controls.removeEventListener('change',editor.RenderLoop,false);
             editor.controls.enableDamping = true;
@@ -302,7 +302,7 @@ Menubar.scenarios = function (editor) {
     rDampingFactorRange.dom.value="0";
     $(rDampingFactorRange.dom).on("input change",function(){
         rDampingFactorValue.setValue(rDampingFactorRange.dom.value);
-        editor.controls.dampingFactor = rDampingFactorRange.dom.value/200;
+        editor.controls.dampingFactor = rDampingFactorRange.dom.value/100;
     });
     var rDampingFactorValue = new UI.createDiv('value',rDampingFactor,null,'i');
     $(rDampingFactorValue.dom).on("input change",function(){

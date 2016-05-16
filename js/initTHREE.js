@@ -25,7 +25,7 @@
                 }
                 if(atr3[1]){
                     editor.controls.enableDamping=true;
-                    editor.controls.dampingFactor = atr3[0]/200;
+                    editor.controls.dampingFactor = atr3[0]/100;
                 }
             }
             if(dataBase.controls.type=="2"){

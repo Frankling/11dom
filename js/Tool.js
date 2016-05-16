@@ -128,7 +128,7 @@ var Tool= function ( editor ) {
             dataBase.controls.type="1";
             dataBase.controls.atr1="["+[editor.camera.fov,getBool("rFov")].toString()+"]";
             dataBase.controls.atr2="["+[(Math.PI-editor.controls.maxPolarAngle) *200/Math.PI,getBool("rLimit")].toString()+"]";
-            dataBase.controls.atr3="["+[(editor.controls.dampingFactor*200),getBool("rResistance")].toString()+"]";
+            dataBase.controls.atr3="["+[(editor.controls.dampingFactor*100),getBool("rResistance")].toString()+"]";
 
         }else if(editor.controls.type=="FirstPersonControls"){
             dataBase.controls.type="2";
@@ -146,7 +146,7 @@ var Tool= function ( editor ) {
        //dataBase.camera.position.x=editor.camera.position.x
        //dataBase.camera.position.y=editor.camera.position.y
        //dataBase.camera.position.z=editor.camera.position.z
-        //sprite
+        //sprite¡¤
         dataBase.labels={};
         var label=editor.labels;
         for(var i in label){

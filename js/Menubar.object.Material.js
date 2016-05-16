@@ -599,9 +599,11 @@ var Material = function (editor) {
  //10.折射=============================================================================================
     var mRefractionRow = new UI.createDiv('attrRow',materialBody);
     new UI.createDiv('text',mRefractionRow,'折射');
+
     //开关
     var mRefractionSwitch=new  UI.createDiv('OffButton',mRefractionRow);
     mRefractionSwitch.onClick(function () {
+        debugger
         if (mRefractionSwitch.dom.className === "OffButton") {
             mRefractionSwitch.setClass("onButton");
         } else {
@@ -622,7 +624,7 @@ var Material = function (editor) {
 
                         }else{
                             child.material.envMap=null;
-                            child.material.envMap.dispose();
+                          //  child.material.envMap.dispose();
 
                         }
 
