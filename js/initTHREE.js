@@ -105,15 +105,16 @@
                 //    console.log(child);
                     if(dataBase.labels.hasOwnProperty(child.uuid)){
 
-                        var i=child.uuid;
+                       var i=child.uuid;
                        var enableLine=dataBase.labels[i].enableLine;
                        var lineHeight=dataBase.labels[i].lineHeight;
                        var title=dataBase.labels[i].title;
                        var cssType=dataBase.labels[i].cssType;
                        var cameraPosition=dataBase.labels[i].cameraPosition;
-                        var display=dataBase.labels[i].display;
+                       var display=dataBase.labels[i].display;
+                        var ROrL=dataBase.labels[i].ROrL;
                        createLabel(editor,document.getElementById("viewport"),editor.camera,undefined,child.getWorldPosition(),child);
-                       updateLabelsAtt({obj:child,cssType:cssType,enableLine:enableLine,lineHeight:lineHeight,title:title,cameraPosition:cameraPosition,display:display});
+                       updateLabelsAtt({obj:child,cssType:cssType,enableLine:enableLine,lineHeight:lineHeight,title:title,cameraPosition:cameraPosition,display:display,ROrL:ROrL});
                        updateNowPosition(editor,child);
 
                     }

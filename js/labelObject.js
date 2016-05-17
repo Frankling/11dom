@@ -1,6 +1,7 @@
 /**
  * Created by asforever on 2016/5/4.
  */
+
 var createLabel=function(editor,viewport,camera,mesh,point,hasLabel){
     var projector=new THREE.Projector();
     var label;
@@ -17,6 +18,7 @@ var createLabel=function(editor,viewport,camera,mesh,point,hasLabel){
         sprite.lineHeight=50;
         sprite.title="";
         sprite.cameraPosition=undefined;
+        sprite.ROrL="R";
 
         return sprite;
     };
@@ -72,14 +74,14 @@ var createLabel=function(editor,viewport,camera,mesh,point,hasLabel){
         var lineDiv=document.createElement("canvas");
         lineDiv.className="label2dCanvas";
         lineDiv.style.display="none";
-        lineDiv.style.height="50px";
-        lineDiv.style.width="100px";
+        lineDiv.height="50";
+        lineDiv.width="100";
         var lineContext = lineDiv.getContext( '2d' );
-        lineContext.strokeStyle = "blue";
-        lineContext.lineWidth = 3;
+        lineContext.strokeStyle = "#000000";
+        lineContext.lineWidth = 1;
         lineContext.beginPath();
-        lineContext.moveTo(0,150);
-        lineContext.lineTo(300,0);
+        lineContext.moveTo(50,50);
+        lineContext.lineTo(100,0);
         lineContext.stroke();
         return lineDiv;
     };
@@ -102,7 +104,7 @@ var createLabel=function(editor,viewport,camera,mesh,point,hasLabel){
         label=createSprite(hasLabel);
 
         var distance=point.distanceTo(camera.position);
-        var realy=new THREE.Vector3(camera.position.x/distance,camera.position.y/distance,camera.position.z/distance);
+        var realy=new THREE.Vector3(camera.position.x/distance/3,camera.position.y/distance/3,camera.position.z/distance/3);
         if(hasLabel==undefined)label.position.copy(new THREE.Vector3().copy(point).add(realy).sub(mesh.getWorldPosition()));
         label2d.setId(label.uuid+"V");
         label2d.onClick(function(){
@@ -123,11 +125,11 @@ var createLabel=function(editor,viewport,camera,mesh,point,hasLabel){
             });
         });
 
-        projector.projectVector(point,camera);
-        var left = ( point.x + 1) / 2 * viewport.offsetWidth;
-        var top = ( -point.y + 1) / 2 * viewport.offsetHeight;
-        label2d.dom.style.top=top+"px";
-        label2d.dom.style.left=left+"px";
+     // projector.projectVector(point,camera);
+     // var left = ( point.x + 1) / 2 * viewport.offsetWidth;
+     // var top = ( -point.y + 1) / 2 * viewport.offsetHeight;
+     // label2d.dom.style.top=top+"px";
+     // label2d.dom.style.left=left+"px";
 
 
     };
@@ -135,13 +137,32 @@ var createLabel=function(editor,viewport,camera,mesh,point,hasLabel){
 
     return (function(){
         if(hasLabel==undefined) mesh.add(label);
+
         viewport.appendChild(label2d.dom);
         editor.labels[label.uuid]=label;
+        var ances=getAnces(editor,label);
+        var center=editor.getCenter(ances);
+       //projector.projectVector(center,camera);
+
+        if(center.x>point.x){
+            updateLabelsAtt({  obj:label,ROrL:"L"})
+        }
         createList(editor,label);
+        updateNowPosition(editor,label);
         editor.signals.addLabel.dispatch(label);
       //  updateScale(editor,label,point);
     })();
 
+};
+var getAnces=function(editor,obj){
+    var ances;
+    obj.traverseAncestors(function(parent){
+        if(parent.parent==editor.scene){
+            ances=parent;
+            return false;
+        }
+    });
+    return ances;
 };
 var removeLabel=function(editor,label,viewport){
     delete editor.selected[label.uuid];
@@ -151,6 +172,22 @@ var removeLabel=function(editor,label,viewport){
     document.getElementById("labelContent").removeChild(document.getElementById(label.uuid));
     editor.removeObject(label);
 
+};
+var updateCanvas=function(canvas,dir){
+    var lineContext=canvas.getContext("2d");
+    lineContext.strokeStyle = "#000000";
+    lineContext.clearRect(0,0,300,300);
+    lineContext.lineWidth = 1;
+    lineContext.beginPath();
+    if(dir="L"){
+        lineContext.moveTo(0,0);
+        lineContext.lineTo(50,50);
+    }else{
+        lineContext.moveTo(50,50);
+        lineContext.lineTo(100,0);
+    }
+
+    lineContext.stroke();
 };
 var updateLabelCamera=function(label,bool){
 
@@ -199,7 +236,8 @@ var updateLabelsAtt=function (parameters){
     if(parameters.lineHeight!==undefined){
         obj.lineHeight=parameters.lineHeight;
         $(".label2d canvas").css("height",parameters.lineHeight+"px");
-        $(".label2d canvas").css("width",2*parameters.lineHeight+"px");
+        $(".label2d canvas").css("width",4*parameters.lineHeight+"px");
+        $(".label2d canvas").css("margin-left",-2*parameters.lineHeight+"px");
     }
     if(parameters.title!==undefined){
         obj.title=parameters.title;
@@ -209,6 +247,10 @@ var updateLabelsAtt=function (parameters){
         obj.cameraPosition=undefined;
     }
     if(parameters.cameraPosition!==undefined)obj.cameraPosition=parameters.cameraPosition;
+    if(parameters.ROrL!==undefined){
+        obj.ROrL=(parameters.ROrL);
+        updateCanvas(document.getElementById(obj.uuid+"V").children[1],parameters.ROrL)
+    }
 };
 var updateNowPosition=function(editor,obj){
    // var labels=editor.labels;
@@ -231,28 +273,28 @@ var updateScale=function(editor,obj,point){
 };
 var updateLabelPosition=function(obj,viewport,point,point2d){
 
+    var ROrL=obj.ROrL;
     var cssType= obj.cssType;
     var children= document.getElementById(obj.uuid+"V");
     var enableLine= obj.enableLine;
-    var lineHeight= obj.lineHeight;
+    var lineHeight= enableLine?obj.lineHeight:0;
     var cameraPosition= obj.cameraPosition;
     obj.position.copy(new THREE.Vector3().copy(point).sub(obj.parent.getWorldPosition()));
     updateScale(editor,obj,point);
+
+    var ROrLValue=obj.ROrL=="R"?0:-(4*lineHeight+210);
+
     var left = ( point2d.x + 1) / 2 * viewport.offsetWidth;
     var top = ( -point2d.y + 1) / 2 * viewport.offsetHeight;
 
 
     var topDiv=20;
     var levalTop=0;
+    children.children[0].style.marginLeft =2*lineHeight+ROrLValue+"px";
     if(enableLine){
-
         topDiv+=lineHeight+20;
-        children.children[0].style.marginLeft = 2*lineHeight+"px";
         if(enableLine)$(".label2d canvas").css("display","block");
-
-
     }else{
-        children.children[0].style.marginLeft = 0+"px";
         levalTop=-20;
     }
 

@@ -208,6 +208,7 @@ Editor.prototype = {
 
     },
     loadEnd:function(){
+
         var _initTHREE=new initTHREE(this);
          if(this.loadEndV[0]&&this.loadEndV[1]){
 
@@ -472,7 +473,34 @@ Editor.prototype = {
 
 
     },
+    getCenter:function(obj){
+        var position;
+        var max=new THREE.Vector3();
+        var min=new THREE.Vector3();
+        var n=true;
+        var center;
 
+        var l=obj.children;
+        var oldPosition=obj.getWorldPosition();
+        obj.traverse(function(child){
+            if(child instanceof THREE.Mesh){
+                if(child.geometry.boundingBox==null)child.geometry.computeBoundingBox();
+                var other=child.geometry.boundingBox;
+                position=child.getWorldPosition();
+                if(n){
+                    max.copy( position.add(new THREE.Vector3(other.max.x,other.max.y,other.max.z)));
+                    min.copy( position.add(new THREE.Vector3(other.min.x,other.min.y,other.min.z)));
+                    n=false;
+                }
+                max.set(Math.max( max.x,position.x+other.max.x),Math.max(max.y,position.y+other.max.y),Math.max(max.z,position.z+other.max.z));
+                min.set(Math.min( min.x,position.x+other.min.x),Math.min(min.y,position.y+other.min.y),Math.min(min.z,position.z+other.min.z));
+
+            }
+        });
+        center=new THREE.Vector3((max.x+min.x)/2,(max.y+min.y)/2,(max.z+min.z)/2);
+        return center;
+
+    },
 
     resetAxis:function(){
         var position;
@@ -480,35 +508,21 @@ Editor.prototype = {
         var min=new THREE.Vector3();
         var n=true;
         var s=this.selected;
-        for(var i in this.selected){
-            if(this.selected[i].type=="LightObject"){
+
+        for(var i in s){
+            if(s[i].type=="LightObject"){
                 return
             }
-            var c=s[i].children;
-            var l=c.length;
-            var oldPosition=s[i].getWorldPosition();
-            s[i].traverse(function(child){
-                if(child instanceof THREE.Mesh){
-                    var other=child.geometry.boundingBox;
-                    position=child.getWorldPosition();
-                    if(n){
-                        max.copy( position.add(new THREE.Vector3(other.max.x,other.max.y,other.max.z)));
-                        min.copy( position.add(new THREE.Vector3(other.min.x,other.min.y,other.min.z)));
-                        n=false;
-                    }
-                    max.set(Math.max( max.x,position.x+other.max.x),Math.max(max.y,position.y+other.max.y),Math.max(max.z,position.z+other.max.z));
-                    min.set(Math.min( min.x,position.x+other.min.x),Math.min(min.y,position.y+other.min.y),Math.min(min.z,position.z+other.min.z));
+             var c=s[i].children;
+             var l= c.length;
+             var oldPosition=s[i].getWorldPosition();
+             var center=this.getCenter(s[i]);
+             s[i].position.copy( new THREE.Vector3().copy(center).sub(s[i].parent.getWorldPosition()));
+             center.sub(oldPosition);
+             for( var j=0;j<l;j++){
+                 c[j].position.sub(center);
+             }
 
-                }
-          });
-            if(l>0){
-                var center=new THREE.Vector3((max.x+min.x)/2,(max.y+min.y)/2,(max.z+min.z)/2);
-                s[i].position.copy( new THREE.Vector3().copy(center).sub(s[i].parent.getWorldPosition()));
-                center.sub(oldPosition);
-                for( var j=0;j<l;j++){
-                    c[j].position.sub(center);
-                }
-            }
 
         }
 

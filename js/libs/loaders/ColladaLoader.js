@@ -123,6 +123,7 @@ THREE.ColladaLoader = function () {
 	function parse( text, callBack, url ) {
 
 		COLLADA = new DOMParser().parseFromString( text, 'text/xml' );
+
 		callBack = callBack || readyCallbackFunc;
 
 		if ( url !== undefined ) {
@@ -132,7 +133,7 @@ THREE.ColladaLoader = function () {
 			baseUrl = ( parts.length < 1 ? '.' : parts.join( '/' ) ) + '/';
 
 		}
-
+		console.log(COLLADA)
 		parseAsset();
 		setUpConversion();
 		images = parseLib( "library_images image", _Image, "image" );

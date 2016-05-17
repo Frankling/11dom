@@ -125,15 +125,66 @@ var Loader = function ( editor ) {
 				var reader = new FileReader();
 				reader.addEventListener( 'load', function ( event ) {
 
+
 					var contents = event.target.result;
-
 					var loader = new THREE.ColladaLoader();
-					var collada = loader.parse( contents );
+					var collada = loader.parse( contents ,function(child){
+						var time=0;
+						var kfAnimations=[];
+						var animations = child.animations;
+						var scene=child.scene;
+						scene.scale.x=scene.scale.y=scene.scale.z=8;
+						var l=animations.length;
 
-					collada.scene.name = filename;
+						for ( var i = 0; i < l; ++i ) {
 
-					editor.addObject( collada.scene );
-					editor.select( collada.scene );
+							var animation = animations[ i ];
+
+							var kfAnimation = new THREE.KeyFrameAnimation( animation );
+							kfAnimations.push(kfAnimation);
+
+							var hl=kfAnimation.hierarchy.length;
+							for( var h = 0; h < hl; h++ ){
+								var keys = kfAnimation.data.hierarchy[ h ].keys;
+								var sids = kfAnimation.data.hierarchy[ h ].sids;
+								var obj = kfAnimation.hierarchy[ h ];
+
+								if(keys.length&&sids){
+									for ( var s = 0; s < sids.length; s++ ) {
+
+										var sid = sids[ s ];
+										var next = kfAnimation.getNextKeyWith( sid, h, 0 );
+
+										if ( next ) next.apply( sid );
+
+									}
+									obj.matrixAutoUpdate = false;
+									kfAnimation.data.hierarchy[ h ].node.updateMatrix();
+									obj.matrixWorldNeedsUpdate = true;
+								}
+							}
+nicai=kfAnimation;
+							kfAnimation.loop = false;
+							kfAnimation.play();
+						}
+
+						var animate=function(a){
+							var delay=(a-time)*0.001;
+							for ( var i = 0; i < kfAnimations.length; ++i ) {
+								kfAnimations[ i ].update( delay );
+							}
+
+							editor.signals.sceneGraphChanged.dispatch();
+							requestAnimationFrame(animate);
+
+						};
+						animate(0);
+						scene.name = filename;
+						editor.addObject(scene );
+						editor.select(scene );
+					});
+
+
 
 				}, false );
 				reader.readAsText( file );
@@ -257,6 +308,7 @@ var Loader = function ( editor ) {
 				}, false );
 				reader.readAsText( file );
 				break;
+
 /*		case 'obj':
 
 			var reader = new FileReader();

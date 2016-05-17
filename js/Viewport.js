@@ -17,6 +17,7 @@ var Viewport=function(editor){
 
     container.dom.appendChild(renderer.domElement);
     var vlogo=new UI.createDiv('vlogo',container);
+
     var scene = editor.scene;
     var sceneHelpers = editor.sceneHelpers;
     var sceneGlobal = editor.sceneGlobal;
@@ -125,7 +126,7 @@ var Viewport=function(editor){
                         var offset=new THREE.Vector3().copy(labels[i].getWorldPosition()).sub(point);
                         var camera=editor.camera;
                         var distance=point.distanceTo(camera.position);
-                        var realy=new THREE.Vector3(camera.position.x/distance,camera.position.y/distance,camera.position.z/distance);
+                        var realy=new THREE.Vector3(camera.position.x/distance/3,camera.position.y/distance/3,camera.position.z/distance/3);
                         labels[i].position.sub(offset).add(realy);
                         bool=true;
                         editor.signals.sceneGraphChanged.dispatch();

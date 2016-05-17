@@ -8889,13 +8889,14 @@ THREE.Object3D.prototype = {
 
 	},
 
-	traverseAncestors: function ( callback ) {
+	traverseAncestors: function ( callback) {
 
 		var parent = this.parent;
 
 		if ( parent !== null ) {
 
-			callback( parent );
+			var c=callback( parent );
+			if(c==false)return;
 
 			parent.traverseAncestors( callback );
 

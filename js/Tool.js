@@ -105,6 +105,28 @@ var Tool= function ( editor ) {
 
     });
 
+    var smoth= new UI.Panel();
+    smoth.setClass( 'toolList' );
+    tool.add( smoth);
+    smoth.dom.style.backgroundImage="url('image/resetCamera.png')";
+    smoth.onClick(function(){
+        var selected=editor.selected;
+     //   for(var i in selected){
+            var geo=new THREE.BoxGeometry(100,100,100,3,3,3);
+            var box=new THREE.Mesh(geo,new THREE.MeshBasicMaterial());
+
+            var geo1=geo.clone();
+            var modifier = new THREE.SubdivisionModifier(2);
+            modifier.modify(geo1);
+            var mesh=new THREE.Mesh(geo1,new THREE.MeshBasicMaterial());
+
+            mesh.position.copy(new THREE.Vector3(10,10,10));
+            editor.addObject(mesh);
+       // }
+
+
+    });
+
     var save = new UI.Panel();
     save.setClass( 'save' );
     container.add( save );
@@ -157,6 +179,7 @@ var Tool= function ( editor ) {
            dataBase.labels[i].title          =label[i].title;
            dataBase.labels[i].cssType        =label[i].cssType;
            dataBase.labels[i].cameraPosition=label[i].cameraPosition;
+           dataBase.labels[i].display=label[i].display;
 
         }
 
