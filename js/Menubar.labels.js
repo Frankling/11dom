@@ -134,7 +134,7 @@ Menubar.labels = function ( editor ) {
         if (bgBox.dom.className === "OffButton") {
             bgBox.setClass("onButton");
             for(var i in labels){
-                updateLabelsAtt({obj:labels[i],enableLine:true});
+                updateLabelsAtt({obj:labels[i],enableLine:true,lineHeight:parseInt(rDampingFactorRange.dom.value)});
                 updateNowPosition(editor,labels[i]);
             }
 
