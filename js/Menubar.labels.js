@@ -60,37 +60,45 @@ Menubar.labels = function ( editor ) {
         var labels=editor.labels;
         for(var i in selected){
             if(labels.hasOwnProperty( i)){
-                removeLabel(editor,labels[i],viewport);
+
+                labelObject.removeLabel(editor,labels[i],viewport);
             }
 
         }
     });
+
     var addLabelFun=function(e){
         if(e.button==0){
             var camera=editor.camera;
             var labels=editor.labels;
             var bool;
             var intersects=editor.getIntersects(e);
-            for(var i in labels){
-                var cssType   =labels[i].cssType;
-                var enableLine=labels[i].enableLine;
-                var lineHeight=labels[i].lineHeight;
-                break;
-            }
+         //   for(var i in labels){
+         //       var cssType   =labels[i].cssType;
+         //       var enableLine=labels[i].enableLine;
+         //       var lineHeight=labels[i].lineHeight;
+         //       break;
+         //   }
 
             if(intersects.length>0){
-                var point=intersects[0].point;
+
+                var normal=intersects[0].face.normal;
                 var object=intersects[0].object;
-                createLabel(editor,viewport,camera,object,point);
-                for(var i in labels){
-                    updateLabelsAtt({
-                        obj:labels[i],
-                        cssType:cssType,
-                        enableLine:enableLine,
-                        lineHeight:lineHeight
-                    });
-                    updateNowPosition(editor,labels[i]);
+                var point=intersects[0].point.sub(object.getWorldPosition());
+
+                if(object instanceof THREE.Mesh){
+                    labelObject.createLabel(object,point,undefined,normal);
                 }
+
+              //  for(var i in labels){
+              //      updateLabelsAtt({
+              //          obj:labels[i],
+              //          cssType:cssType,
+              //          enableLine:enableLine,
+              //          lineHeight:lineHeight
+              //      });
+              //      updateNowPosition(editor,labels[i]);
+              //  }
 
             }
         }
@@ -126,7 +134,7 @@ Menubar.labels = function ( editor ) {
     var bgHiddenArrowGlobal = new UI.createDiv('attrTriPng',bgHeaderGlobal);
     var bgHelpGlobal = new UI.createDiv('attrHelp',bgHeaderGlobal);
     var bgContentGlobal = new UI.createDiv('Attr_Content',bgAttrGlobal);
-    var bgPic = new  UI.createDiv('attrRow',bgContentGlobal);
+   /* var bgPic = new  UI.createDiv('attrRow',bgContentGlobal);
     new UI.createDiv('text',bgPic,'线条');
     var bgBox = new UI.createDiv('OffButton',bgPic);
     bgBox.onClick(function(){
@@ -134,14 +142,14 @@ Menubar.labels = function ( editor ) {
         if (bgBox.dom.className === "OffButton") {
             bgBox.setClass("onButton");
             for(var i in labels){
-                updateLabelsAtt({obj:labels[i],enableLine:true,lineHeight:parseInt(rDampingFactorRange.dom.value)});
+                updateLabelsAtt({obj:labels[i].children[0],enableLine:true,lineHeight:parseInt(rDampingFactorRange.dom.value)});
                 updateNowPosition(editor,labels[i]);
             }
 
         } else {
             bgBox.setClass("OffButton");
             for(var i in labels){
-                updateLabelsAtt({obj:labels[i],enableLine:false});
+                updateLabelsAtt({obj:labels[i].children[0],enableLine:false});
                 updateNowPosition(editor,labels[i]);
             }
             $(".label2d canvas").css("display","none");
@@ -158,8 +166,8 @@ Menubar.labels = function ( editor ) {
         rDampingFactorValue.setValue(rDampingFactorRange.dom.value);
         var labels=editor.labels;
         for(var i in labels){
-            updateLabelsAtt({obj:labels[i],lineHeight:parseInt(this.value)});
-            updateNowPosition(editor,labels[i]);
+           updateLabelsAtt({obj:labels[i].children[0],lineHeight:parseInt(this.value)});
+           updateNowPosition(editor,labels[i]);
         }
 
     });
@@ -171,7 +179,7 @@ Menubar.labels = function ( editor ) {
 
     var pCameraAttr = new UI.createDiv('',bgPic);
     pCameraAttr.dom.style.display='none';
-
+*/
     bgHeaderGlobal.onClick(function () {
         if (bgContentGlobal.dom.style.display == "none") {
             bgContentGlobal.dom.style.display = "block";
@@ -191,8 +199,8 @@ Menubar.labels = function ( editor ) {
         var value=this.dom.selectedIndex;
         var typeFun=function(cssType){
             for(var i in labels){
-                updateLabelsAtt({obj:labels[i],cssType:cssType})
-                updateNowPosition(editor,labels[i]);
+                labelObject.updateLabelsAtt({obj:labels[i],cssType:cssType})
+                labelObject.updateNowPosition(editor,labels[i]);
             }
         }
         switch (value){
@@ -249,9 +257,9 @@ Menubar.labels = function ( editor ) {
         var cameraPosition={TX:TX,TY:TY,TZ:TZ,PX:PX,PY:PY,PZ:PZ};
         for(var i in selected){
             if(labels.hasOwnProperty( i)){
-                updateLabelsAtt({
-                    obj:labels[i],
-                    cameraPosition:cameraPosition,
+                labelObject.updateLabelsAtt({
+                    obj:labels[i].children[0],
+                    cameraPosition:cameraPosition
                 });
             }
 
@@ -266,16 +274,16 @@ Menubar.labels = function ( editor ) {
     $(titleText.dom).on("input change",function(){
         var selected=editor.selected;
         var labels=editor.labels;
-        for(var i in selected){
-            if(labels.hasOwnProperty( i)){
+         for(var i in selected){
+             if(labels.hasOwnProperty( i)){
 
-                updateLabelsAtt({
-                    obj:labels[i],
-                    title:this.value,
-                });
-            }
+                 labelObject.updateLabelsAtt({
+                     obj:labels[i].children[0],
+                     title:this.value,
+                 });
+             }
 
-        }
+         }
     });
 
     var labelContent =new UI.createDiv('labelTitle',bgContentPart,undefined,"i");

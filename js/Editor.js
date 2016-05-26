@@ -83,6 +83,7 @@ var Editor = function () {
     this.traceCamera={};
     this.rcube=new THREE.CubeTextureLoader().load(["rcube/1_BK.jpg","rcube/1_DN.jpg","rcube/1_FR.jpg","rcube/1_LF.jpg","rcube/1_RT.jpg","rcube/1_UP.jpg"]);
     this.loadEndV=[false,false];
+    this.geometriesText={};
 
 
 
@@ -200,7 +201,7 @@ Editor.prototype = {
 
         if(this.allObject3D.length>0){
 
-            this.centerObject(this.allObject3D);
+            //this.centerObject(this.allObject3D);
         }
 
        // this.signals.sceneGraphChanged.active = true;

@@ -21,7 +21,7 @@ var Tool= function ( editor ) {
     toolMove.dom.style.backgroundImage="url('image/toolmove.png')";
     toolMove.onClick(function(){
         editor.signals.selectTransform.dispatch( "translate");
-        //        点击后更改绿色背景颜�
+        //        点击后更改绿色背景颜�
         for(var i=0;i<this.dom.parentNode.childNodes.length;i++){
             this.dom.parentNode.childNodes[i].style.backgroundColor="#343434";
         }
@@ -35,7 +35,7 @@ var Tool= function ( editor ) {
     toolRotate.dom.style.backgroundImage="url('image/toolRotate.png')";
     toolRotate.onClick(function(){
         editor.signals.selectTransform.dispatch( "rotate");
-        //      点击后更改绿色背景颜�
+        //      点击后更改绿色背景颜�
         for(var i=0;i<this.dom.parentNode.childNodes.length;i++){
             this.dom.parentNode.childNodes[i].style.backgroundColor="#343434";
         }
@@ -50,7 +50,7 @@ var Tool= function ( editor ) {
 
     toolScale.onClick(function(){
         editor.signals.selectTransform.dispatch( "scale");
-        //        点击后更改绿色背景颜�
+        //        点击后更改绿色背景颜�
         for(var i=0;i<this.dom.parentNode.childNodes.length;i++){
 
             this.dom.parentNode.childNodes[i].style.backgroundColor="#343434";
@@ -66,7 +66,7 @@ var Tool= function ( editor ) {
 
     toolCenter.onClick(function(){
         editor.resetAxis();
-        //        点击后更改绿色背景颜�
+        //        点击后更改绿色背景颜�
         for(var i=0;i<this.dom.parentNode.childNodes.length;i++){
             this.dom.parentNode.childNodes[i].style.backgroundColor="#343434";
         }
@@ -83,7 +83,7 @@ var Tool= function ( editor ) {
 
         editor.Grid.visible=!editor.Grid.visible;
         editor.signals.sceneGraphChanged.dispatch();
-        //        点击后更改绿色背景颜�
+        //        点击后更改绿色背景颜�
         for(var i=0;i<this.dom.parentNode.childNodes.length;i++){
             this.dom.parentNode.childNodes[i].style.backgroundColor="#343434";
         }
@@ -168,18 +168,22 @@ var Tool= function ( editor ) {
        //dataBase.camera.position.x=editor.camera.position.x
        //dataBase.camera.position.y=editor.camera.position.y
        //dataBase.camera.position.z=editor.camera.position.z
-        //sprite��
+        //sprite��
         dataBase.labels={};
         var label=editor.labels;
         for(var i in label){
-            var child=document.getElementById(label[i].uuid+"V");
+        //    var child=document.getElementById(i+"V");
+            var labelS=label[i].children[0];
            dataBase.labels[i]={};
-           dataBase.labels[i].enableLine    =label[i].enableLine;
-           dataBase.labels[i].lineHeight    =label[i].lineHeight;
-           dataBase.labels[i].title          =label[i].title;
-           dataBase.labels[i].cssType        =label[i].cssType;
-           dataBase.labels[i].cameraPosition=label[i].cameraPosition;
-           dataBase.labels[i].display=label[i].display;
+        //   dataBase.labels[i].enableLine    =labelS.enableLine;
+       //    dataBase.labels[i].lineHeight    =labelS.lineHeight;
+           dataBase.labels[i].title          =labelS.title;
+         //  dataBase.labels[i].cssType        =labelS.cssType;
+           dataBase.labels[i].cameraPosition=labelS.cameraPosition;
+           dataBase.labels[i].normal={x:labelS.normal.x,y:labelS.normal.y,z:labelS.normal.z};
+
+            //   dataBase.labels[i].display=label[i].display;
+         //  dataBase.labels[i].ROrL=label[i].ROrL;
 
         }
 
@@ -219,8 +223,8 @@ var Tool= function ( editor ) {
         }
 
 
-        var scene =editor.scene.toJSON();
-        console.log(scene)
+        //var scene =editor.scene.toJSON();
+
        //var scene1= JSON.stringify(scene);
         //var scene1= JSON.stringify(scene);
         /*gz.enGz(scene,function(dd) {
@@ -234,7 +238,17 @@ var Tool= function ( editor ) {
 
         });*/
 
+       // editor.scene.traverse(function(child){
+       //     if(child instanceof THREE.Mesh){
+       //         var exporter = new THREE.OBJExporter();
+       //         var l=exporter.parse( child );
+       //         saveAs(new Blob([l]  ,{type: "text/plain;charset=utf-8"}),child.uuid+".obj");
+       //     }
+       // },true);
+
+
         var scene = editor.scene.toJSON();
+
         var scene1= JSON.stringify(scene);
         var sceneBG = editor.planbox.toJSON();
         var sceneBG1= JSON.stringify(sceneBG);

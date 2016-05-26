@@ -100,26 +100,33 @@
             AmbientLight.intensity=dataBase.AmbientLight.intensity;
         };
         this.initLabel=function(){
-             //   console.log(editor.allObject3D)
-                editor.allObject3D.traverse(function(child){
-                //    console.log(child);
-                    if(dataBase.labels.hasOwnProperty(child.uuid)){
+              var object=editor.allObject3D;
 
-                       var i=child.uuid;
-                       var enableLine=dataBase.labels[i].enableLine;
-                       var lineHeight=dataBase.labels[i].lineHeight;
-                       var title=dataBase.labels[i].title;
-                       var cssType=dataBase.labels[i].cssType;
-                       var cameraPosition=dataBase.labels[i].cameraPosition;
-                       var display=dataBase.labels[i].display;
-                        var ROrL=dataBase.labels[i].ROrL;
-                       createLabel(editor,document.getElementById("viewport"),editor.camera,undefined,child.getWorldPosition(),child);
-                       updateLabelsAtt({obj:child,cssType:cssType,enableLine:enableLine,lineHeight:lineHeight,title:title,cameraPosition:cameraPosition,display:display,ROrL:ROrL});
-                       updateNowPosition(editor,child);
+             object.traverse(function(child){
+              //    console.log(child);
 
-                    }
+                  if(dataBase.labels.hasOwnProperty(child.uuid)){
 
-                },true)
+                     var i=child.uuid;
+                    // var enableLine=dataBase.labels[i].enableLine;
+                   //  var lineHeight=dataBase.labels[i].lineHeight;
+                     var title=dataBase.labels[i].title;
+                    // var cssType=dataBase.labels[i].cssType;
+                     var cameraPosition=dataBase.labels[i].cameraPosition;
+                     var normalO=dataBase.labels[i].normal;
+                      var normal=new THREE.Vector3(normalO.x,normalO.y,normalO.z);
+                     //var display=dataBase.labels[i].display;
+                     // var ROrL=dataBase.labels[i].ROrL;
+
+
+                     labelObject.createLabel(undefined,child.parent.getWorldPosition(),child,normal);
+                    // labelObject.updateLabelsAtt({obj:child,cssType:cssType,enableLine:enableLine,lineHeight:lineHeight,title:title,cameraPosition:cameraPosition,display:display,ROrL:ROrL});
+                     labelObject.updateLabelsAtt({obj:child,title:title,cameraPosition:cameraPosition,normal:normal});
+                     labelObject.updateNowPosition(child.parent);
+
+                  }
+
+              },true)
             }
 
     };

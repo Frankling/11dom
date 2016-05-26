@@ -870,10 +870,13 @@ html, body {
 }
 /*interface========================================================================*/
 .label2d{
-
     position:absolute;
-    z-index: 200;
-    pointer-events: none;
+    width: 120px;
+    height: 40px;
+    box-shadow: 0px 0px 12px rgba(0,255,255,0.5);
+    border: 1px solid rgba(127,255,255,0.25);
+    text-align: center;
+    cursor: default;
 }
 .label2dCanvas{
     width:100px;
@@ -881,12 +884,12 @@ html, body {
 
 }
 .labelListC1{
-    width: 200px;
+
     height: 20px;
     float: left;
 }
 .labelHead{
-    width: 80px;
+
     height: 20%;
     opacity: 0.8;
     color: #e4e2e1;
@@ -895,17 +898,17 @@ html, body {
 }
 .labelBody{
 
-    width:  180px;
+    width: auto;
     height: 17px;
     opacity: 0.8;
     padding: 10px;
     color: #e4e2e1;
     border-radius: 7px;
-    background: #232323;
+
 }
 .labelBody textarea{
     color: #e4e2e1;
-    width: 180px;
+    width: 80px;
     height: 17px;
     background:transparent;
     border-style:none;

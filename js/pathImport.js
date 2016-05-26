@@ -22,7 +22,7 @@ var pathImport= function(editor){
             _object.name=name;
             _object.component="mainObject"
             editor.allObject3D.children.push(_object);
-            editor.centerObject(_object);
+           // editor.centerObject(_object);
             editor.addObject(_object,editor.scene);
             editor.select( _object );
             editor.signals.sceneGraphChanged.dispatch();

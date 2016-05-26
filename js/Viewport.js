@@ -71,13 +71,17 @@ var Viewport=function(editor){
         if(button==0) {
 
             if (intersects.length > 0 && !transformControls.hasIntersect) {
-                editor.select(intersects[0].object);
+                var select=intersects[0].object;
+                editor.select(select);
                 if(intersects[0].object.hasOwnProperty("cameraPosition")){
                     if(isDoubleClick){
-                        updateLabelCamera(intersects[0].object,isDoubleClick);
+                       // updateLabelCamera(intersects[0].object,isDoubleClick);
                         var labels=editor.labels;
+                        if(editor.labels.hasOwnProperty( select.uuid)&&isDoubleClick){
+                            labelObject.updateLabelCamera(select);
+                        }
                         for(var i in labels){
-                            updateNowPosition(editor,labels[i]);
+                            labelObject.updateNowPosition(labels[i]);
                         }
                     }
                     isLabelSelect=true;
@@ -118,16 +122,20 @@ var Viewport=function(editor){
         var selected=editor.selected;
         var labels=editor.labels;
         var bool;
+        console.log(isLabelSelect);
         if(isLabelSelect){
+
             for(var i in selected){
 
                 if(point&&labels.hasOwnProperty( i)){
+
                     if(parent== labels[i].parent){
+
                         var offset=new THREE.Vector3().copy(labels[i].getWorldPosition()).sub(point);
                         var camera=editor.camera;
                         var distance=point.distanceTo(camera.position);
                         var realy=new THREE.Vector3(camera.position.x/distance/3,camera.position.y/distance/3,camera.position.z/distance/3);
-                        labels[i].position.sub(offset).add(realy);
+                        labels[i].position.sub(offset);
                         bool=true;
                         editor.signals.sceneGraphChanged.dispatch();
                     }
@@ -182,12 +190,7 @@ var Viewport=function(editor){
     function render() {
         var labels=editor.labels;
         for(var i in labels){
-
-            var point=labels[i].getWorldPosition();
-            var point2d=new THREE.Vector3().copy(point);
-            projector.projectVector(point2d,editor.camera);
-           // console.log(labels[i].parent)
-            updateLabelPosition(labels[i],container.dom,point,point2d);
+            labelObject.updateNowPosition(labels[i]);
         }
         if(Object.keys(editor.traceCamera).length) trace();
         sceneHelpers.updateMatrixWorld();

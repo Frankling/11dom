@@ -37,6 +37,8 @@
 <script src="js/libs/loaders/OBJMTLLoader.js"></script>
 <script src="js/libs/loaders/ColladaLoader.js"></script>
 
+<script src="js/libs/export/OBJExporter.js"></script>
+
 <script src="js/libs/loaders/collada/Animation.js"></script>
 <script src="js/libs/loaders/collada/AnimationHandler.js"></script>
 <script src="js/libs/loaders/collada/KeyFrameAnimation.js"></script>
@@ -81,6 +83,8 @@
 <script>
 
     var editor = new Editor();
+    var labelObject = new labelObject(editor);
+
     var Share=  new Share(editor);
 
     var tool = new Tool(  editor );
@@ -95,6 +99,7 @@
     var lib = new Lib(  editor );
     document.body.appendChild(lib.dom );
 
+    
     window.onkeydown=function(event){
         switch ( event.keyCode ) {
             case 17: // ctrl

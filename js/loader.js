@@ -129,51 +129,74 @@ var Loader = function ( editor ) {
 					var contents = event.target.result;
 					var loader = new THREE.ColladaLoader();
 					var collada = loader.parse( contents ,function(child){
+						console.log(child);
 						var time=0;
 						var kfAnimations=[];
+						var allTime;
 						var animations = child.animations;
 						var scene=child.scene;
 						scene.scale.x=scene.scale.y=scene.scale.z=8;
 						var l=animations.length;
+						var progress=0;
 
-						for ( var i = 0; i < l; ++i ) {
-
-							var animation = animations[ i ];
-
-							var kfAnimation = new THREE.KeyFrameAnimation( animation );
-							kfAnimations.push(kfAnimation);
-
-							var hl=kfAnimation.hierarchy.length;
-							for( var h = 0; h < hl; h++ ){
-								var keys = kfAnimation.data.hierarchy[ h ].keys;
-								var sids = kfAnimation.data.hierarchy[ h ].sids;
-								var obj = kfAnimation.hierarchy[ h ];
-
-								if(keys.length&&sids){
-									for ( var s = 0; s < sids.length; s++ ) {
-
-										var sid = sids[ s ];
-										var next = kfAnimation.getNextKeyWith( sid, h, 0 );
-
-										if ( next ) next.apply( sid );
-
-									}
-									obj.matrixAutoUpdate = false;
-									kfAnimation.data.hierarchy[ h ].node.updateMatrix();
-									obj.matrixWorldNeedsUpdate = true;
-								}
-							}
-nicai=kfAnimation;
-							kfAnimation.loop = false;
-							kfAnimation.play();
+						for(var j = 0; j < l; ++j ){
+							var animation = animations[ j ];
+							allTime=Math.max(allTime||0,animation.length);
+							kfAnimations.push(new THREE.KeyFrameAnimation( animation ));
 						}
 
-						var animate=function(a){
-							var delay=(a-time)*0.001;
-							for ( var i = 0; i < kfAnimations.length; ++i ) {
-								kfAnimations[ i ].update( delay );
-							}
+						var start=function(){
+							for ( var i = 0; i < l; ++i ) {
 
+								var kfAnimation = kfAnimations[i];
+
+
+								var hl=kfAnimation.hierarchy.length;
+
+								for( var h = 0; h < hl; h++ ){
+									var keys = kfAnimation.data.hierarchy[ h ].keys;
+									var sids = kfAnimation.data.hierarchy[ h ].sids;
+									var obj = kfAnimation.hierarchy[ h ];
+
+									if(keys.length&&sids){
+										for ( var s = 0; s < sids.length; s++ ) {
+
+											var sid = sids[ s ];
+											var next = kfAnimation.getNextKeyWith( sid, h, 0 );
+
+											if ( next ) next.apply( sid );
+
+										}
+										obj.matrixAutoUpdate = false;
+										kfAnimation.data.hierarchy[ h ].node.updateMatrix();
+										obj.matrixWorldNeedsUpdate = true;
+									}
+								}
+								kfAnimation.loop = false;
+								kfAnimation.play();
+							}
+						};
+						start();
+
+
+						var animate=function(a){
+
+							var delay=10;
+							if ( progress >= 0 && progress < allTime*1000 ) {
+								for (var i = 0; i < kfAnimations.length; ++i) {
+									kfAnimations[i].update(delay);
+								}
+							}else  if ( progress >= allTime*1000 ){
+								for ( var i = 0; i < kfAnimations.length; ++i ) {
+
+									kfAnimations[ i ].stop();
+
+								}
+
+								progress = 0;
+								start();
+							}
+							progress+=delay;
 							editor.signals.sceneGraphChanged.dispatch();
 							requestAnimationFrame(animate);
 
@@ -302,7 +325,7 @@ nicai=kfAnimation;
 					object=editor.dissectionObject(object);
 					//object.component="mainObject";
 					editor.allObject3D.children.push(object);
-					editor.centerObject(object);
+					//editor.centerObject(object);
 					editor.addObject( object,editor.scene );
 					editor.select( object );
 				}, false );
