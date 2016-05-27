@@ -19,7 +19,19 @@ var labelObject=function(editor){
         control=editor.controls;
         viewport=document.getElementById("viewport");
         labelContent=document.getElementById("labelContent");
-    }
+    };
+    var GetLength = function(str) {
+        var realLength = 0;
+        for (var i = 0; i < str.length; i++)
+        {
+        var charCode = str.charCodeAt(i);
+        if (charCode >= 0 && charCode <= 128)
+        realLength += 1;
+        else
+        realLength += 2;
+        }
+        return realLength;
+     };
    this.createLabel=function(mesh,point,hasLabel,normal){
         updateCV();
        var labelObject3D;
@@ -61,7 +73,7 @@ var labelObject=function(editor){
             var labelBody=new UI.createDiv('labelBody',label2d);
             var labelBodyI=new UI.createDiv('',labelBody,"请输入内容","t");
             $(labelBodyI.dom).on("input change",function(){
-
+                this.value=this.value.substring(0,15);
                 var id=label2d.dom.id;
                 var title=this.value;
                 var l = id.length;
@@ -227,14 +239,16 @@ var labelObject=function(editor){
     };
    this.updateLabelPosition=function(obj,point,point2d){
         scope.updateScale(obj,point);
+        var children= document.getElementById(obj.uuid+"V");
         var lineGeo=obj.parent.children[1].geometry;
         var v0=new THREE.Vector3().copy(lineGeo.vertices[0]);
         var v1=new THREE.Vector3().copy(lineGeo.vertices[1]);
+        var leftSl=parseInt(children.children[0].children[0].style.width)
         var leftOffset=0;
         var topOffset=0;
         projector.projectVector(v0,camera);
         projector.projectVector(v1,camera);
-        if(v0.x>v1.x) leftOffset=-120;
+        if(v0.x>v1.x) leftOffset=-leftSl-25;
         if(v0.y<v1.y) topOffset=-40;
 
 
@@ -244,7 +258,7 @@ var labelObject=function(editor){
         var normal=new THREE.Vector3().copy(obj.normal);
         // var tempMatrix=new THREE.Matrix4();
         // normal.applyMatrix4(tempMatrix.getInverse(tempMatrix.extractRotation(obj.parent.parent.matrixWorld)));
-        var children= document.getElementById(obj.uuid+"V");
+
         if(mul(normal,vcc)>0){
             obj.parent.visible=true;
             children.style.display="block";
@@ -337,10 +351,12 @@ var labelObject=function(editor){
             obj.normal=parameters.normal;
         }
         if(parameters.title!==undefined){
+            var l=GetLength(parameters.title);
+            document.getElementById(obj.uuid+"V").children[0].children[0].style.width=l*7+8+"px";
             obj.title=parameters.title;
 
             var childT=document.getElementById(obj.uuid+"V").children[0].children[0];
-            //  var l=GetLength(parameters.title);
+            //
             childT.value=parameters.title;
             // childT.style.width=l*8+"px";
 

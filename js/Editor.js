@@ -326,12 +326,8 @@ Editor.prototype = {
             delete this.helpers[ object.uuid ];
             //this.signals.helperRemoved.dispatch( helper );
         }
-        for(var i in this.helpers) {
-            if (this.helpers[i] instanceof THREE.TransformControls) {
-                this.helpers[i].parent.remove(this.helpers[i]);
-                delete this.helpers[i];
-            }
-        }
+
+
     },
     addObject: function ( object ,parent ) {
 

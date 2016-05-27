@@ -272,6 +272,7 @@ Menubar.labels = function ( editor ) {
     new UI.createDiv('text',libelTitle,'标题');
     var titleText=new UI.createDiv('labelTitle',libelTitle,undefined,"i").setValue("");
     $(titleText.dom).on("input change",function(){
+        this.value=this.value.substring(0,15);
         var selected=editor.selected;
         var labels=editor.labels;
          for(var i in selected){

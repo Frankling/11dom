@@ -8866,7 +8866,9 @@ THREE.Object3D.prototype = {
 		for ( var i = 0, l = children.length; i < l; i ++ ) {
 			if(children[ i ]!=undefined){
 				if(bool) callback( children[i] );
-				children[ i ].traverse( callback,bool );
+
+					children[ i ].traverse( callback,bool );
+
 			}
 		}
 
@@ -18919,9 +18921,8 @@ THREE.BufferGeometryLoader.prototype = {
 
 		for ( var key in attributes ) {
 
-			var attribute = attributes[ key ];
+			var attribute = attributes[ key ]
 			var typedArray = new TYPED_ARRAYS[ attribute.type ]( attribute.array );
-
 			geometry.addAttribute( key, new THREE.BufferAttribute( typedArray, attribute.itemSize ) );
 
 		}

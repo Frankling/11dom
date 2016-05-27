@@ -126,6 +126,7 @@ var Loader = function ( editor ) {
 				reader.addEventListener( 'load', function ( event ) {
 
 
+
 					var contents = event.target.result;
 					var loader = new THREE.ColladaLoader();
 					var collada = loader.parse( contents ,function(child){
