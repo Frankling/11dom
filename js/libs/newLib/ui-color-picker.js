@@ -587,8 +587,12 @@ var UIColorPicker = (function UIColorPicker() {
 		for (var i = 0; i < size; i++)
 			new ColorPicker(elem[i]);
 	};
+	var add= function add(element){
+		new ColorPicker(element)
+	};
 
 	return {
+		add:add,
 		init : init,
 		Color : Color,
 		RGBColor : RGBColor,

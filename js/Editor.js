@@ -59,6 +59,8 @@ var Editor = function () {
     this.skybox = {};
 
     this.labels={};
+    this.labels2 = {};
+    this.camerVNuB = [];
     this.planbox = {};
     this.planbox.image = "";
 
@@ -426,7 +428,7 @@ Editor.prototype = {
 
         return object;
     },
-   centerObject:function(object){
+    centerObject:function(object){
        var maxX,maxY,maxZ,minX,minY,minZ;
 
        object.traverse(function (child) {
@@ -824,8 +826,6 @@ Editor.prototype = {
 
     },
 
-
-
     //上传天空盒图片
     UploadSkybox:function(SkyBoxUp,i,event)   {
         var fileName = event.target.files[0].name;
@@ -843,10 +843,10 @@ Editor.prototype = {
     },
 
     //天空盒子更新
-    CreatSkybox:function(image){
-        for(var i=0;i<this.materialsri.length;i++){
+    CreatSkybox:function(array){
+        for(var i=0;i<array.length;i++){
 
-            this.skybox.material.materials[i].map.image.src =this.materialsri[i];
+            this.skybox.material.materials[i].map.image.src =array[i];
             this.skybox.material.materials[i].map.needsUpdate =true;
             this.skybox.material.materials[i].opacity = 1;
         }

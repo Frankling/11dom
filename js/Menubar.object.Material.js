@@ -761,10 +761,16 @@ var Material = function (editor) {
                     window.event.cancelBubble = true;//兼容IE
                 }
             });
-            document.onclick = function(){
-                $(".UV_color").hide();
+            document.addEventListener("click",function(event){
+                var length = event.path.length;
+                var bool = false;
+                for(var i = 0; i<length;i++){
+                    if(event.path[i].className == "UV_color" || event.path[i].className == "skyBoxPanel" || event.path[i].className == "box2")
+                        bool = true;
+                }
+                if(event.target.className!="UV_color" && bool!=true)  $(".UV_color").hide();
 
-            };
+            },true);
             $(".UV_color").click(function(e){
                 var ev = e || window.event;
                 if(ev.stopPropagation){

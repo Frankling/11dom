@@ -181,10 +181,58 @@ var Tool= function ( editor ) {
          //  dataBase.labels[i].cssType        =labelS.cssType;
            dataBase.labels[i].cameraPosition=labelS.cameraPosition;
            dataBase.labels[i].normal={x:labelS.normal.x,y:labelS.normal.y,z:labelS.normal.z};
-
             //   dataBase.labels[i].display=label[i].display;
          //  dataBase.labels[i].ROrL=label[i].ROrL;
 
+        }
+
+        dataBase.camera = editor.camera;
+        dataBase.cameracontrols = editor.controls;
+
+        dataBase.skyboxList={};
+        var skyBoxList = document.getElementsByClassName("skyBoxListContentTd");
+        for(var s=0;s<skyBoxList.length;s++){
+            var hotTdIdArr =[];
+            dataBase.skyboxList[s] ={};
+            dataBase.skyboxList[s].camera = editor.camera;
+            dataBase.skyboxList[s].CurArrNum = arrNum;
+            dataBase.skyboxList[s].skyboxArr = arr;
+            dataBase.skyboxList[s].skyboxId = skyBoxList[s].id;
+            dataBase.skyboxList[s].skyboxName = skyBoxList[s].childNodes[0].innerHTML;
+            var hotTd = skyBoxList[s].childNodes[6].childNodes[0].childNodes[0].childNodes;
+            for(var t=0;t<hotTd.length;t++){
+                hotTdIdArr[t] = hotTd[t].id;
+            }
+            dataBase.skyboxList[s].hotListId = hotTdIdArr;
+            console.log(hotTdIdArr);
+            dataBase.skyboxList[s].envValue = skyBoxList[s].childNodes[2].childNodes[3].value;
+            dataBase.skyboxList[s].fogValue = skyBoxList[s].childNodes[4].childNodes[3].value;
+            dataBase.skyboxList[s].fogColor = skyBoxList[s].childNodes[5].childNodes[1].childNodes[0].childNodes[5].childNodes[1].value;
+        }
+
+        dataBase.hotSpotLabels={};
+        var label2 = editor.labels2;
+        for(var j in label2 ){
+            var labelChild = document.getElementById(label2[j].uuid+"V");
+            var num = labelChild.childNodes[0].id.replace(/[^0-9]/ig, "");
+            var hotSpotListContentTd = document.getElementById("hotSpotListContentTd"+num);
+            dataBase.hotSpotLabels[j]={};
+            if(hotSpotListContentTd.childNodes[5]){
+                dataBase.hotSpotLabels[j].url = hotSpotListContentTd.childNodes[5].childNodes[1].value;
+            }
+            dataBase.hotSpotLabels[j].camerVNuB = editor.camerVNuB[label2[j].uuid+"T"];
+            dataBase.hotSpotLabels[j].startPoint = pointArr[num-1];
+            dataBase.hotSpotLabels[j].boxId = hotSpotListContentTd.parentNode.parentNode.parentNode.parentNode.id;
+            dataBase.hotSpotLabels[j].IsLink = hotSpotListContentTd.childNodes[3].childNodes[1].className;
+            dataBase.hotSpotLabels[j].display = labelChild.style.display;
+            dataBase.hotSpotLabels[j].text = labelChild.childNodes[0].innerHTML;
+            dataBase.hotSpotLabels[j].textId = labelChild.childNodes[0].id;
+            var Icon = hotSpotListContentTd.childNodes[2].childNodes[1].childNodes;
+            for(var v=0;v<Icon.length;v++){
+                if(Icon[v].style.border == "1px solid rgb(0, 255, 0)"){
+                    dataBase.hotSpotLabels[j].backgroundImage = Icon[v].style.backgroundImage;
+                }
+            }
         }
 
         //composer

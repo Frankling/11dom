@@ -172,6 +172,7 @@
             var loader = new THREE.ObjectLoader();
             editor.skybox=loader.parse( JSON.parse(text) );
             editor.skybox.scale.x=-1;
+            editor.skybox.material.side=1;
             editor.sceneGlobal.add(editor.skybox);
             editor.signals.sceneGraphChanged.dispatch();
 

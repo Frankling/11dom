@@ -1143,6 +1143,15 @@ UI.Canvas.prototype.constructor = UI.Canvas;
 UI.createDiv=function(className,parent,content,type){
 	var obj;
 	switch (type){
+		case "sp":
+			obj = new UI.Span();
+			break;
+		case "u":
+			obj = new UI.Ul();
+			break;
+		case "l":
+			obj = new UI.Li();
+			break;
 		case "b":
 			obj = new UI.Button();
 			break;
@@ -1166,3 +1175,21 @@ UI.createDiv=function(className,parent,content,type){
 	parent.add(obj);
 	return obj;
 };
+UI.Ul = function(){
+	UI.Element.call( this );
+	//debugger
+	var dom = document.createElement( 'ul' );
+	this.dom=dom;
+	return this;
+};
+UI.Ul.prototype = Object.create( UI.Element.prototype );
+UI.Ul.prototype.constructor = UI.Ul;
+
+UI.Li = function(){
+	UI.Element.call( this );
+
+	this.dom = document.createElement( 'li' );
+	return this;
+};
+UI.Li.prototype = Object.create( UI.Element.prototype );
+UI.Li.prototype.constructor = UI.Li;

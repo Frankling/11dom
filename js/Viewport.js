@@ -122,7 +122,7 @@ var Viewport=function(editor){
         var selected=editor.selected;
         var labels=editor.labels;
         var bool;
-        console.log(isLabelSelect);
+        //console.log(isLabelSelect);
         if(isLabelSelect){
 
             for(var i in selected){
@@ -207,6 +207,9 @@ var Viewport=function(editor){
         });
         for(i in editor.helpers){
             editor.helpers[i].update();
+        }
+        for(var n in editor.labels2){
+            updateHotSpotPosition(editor.labels2[n]);
         }
 
 
