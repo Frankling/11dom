@@ -359,10 +359,13 @@ var Viewport=function(editor){
         transformControls.update();
     });
     signals.objectRemove.add(function(object){
+        var objs=[];
         object.traverse( function ( child ) {
-            if(child instanceof  THREE.Mesh||child instanceof  THREE.Sprite){
+            if(child instanceof  THREE.Mesh||child instanceof THREE.Sprite){
+
                  if(editor.labels.hasOwnProperty(child.uuid)){
-                     removeLabel(editor,child,container.dom);
+                     objs.push(child);
+
                  }
                  /*   for(var i=0;i<child.children.length;i++){
                         var id=child.children[i].uuid;
@@ -383,6 +386,9 @@ var Viewport=function(editor){
             }
 
         } );
+        for(var i=0;i<objs.length;i++){
+            labelObject.removeLabel(editor,objs[i],container.dom);
+        }
         var id = object.uuid;
         $("#"+id).remove();
     });

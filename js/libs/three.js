@@ -4130,7 +4130,7 @@ THREE.Box3.prototype = {
 			object.updateMatrixWorld( true );
 
 			object.traverse( function ( node ) {
-
+				if(node.type=="Line")return;
 				var geometry = node.geometry;
 
 				if ( geometry !== undefined ) {

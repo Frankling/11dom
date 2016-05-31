@@ -471,29 +471,47 @@ Editor.prototype = {
 
     },
     getCenter:function(obj){
+        var scope=this;
         var position;
         var max=new THREE.Vector3();
         var min=new THREE.Vector3();
         var n=true;
         var center;
-
-        var l=obj.children;
-        var oldPosition=obj.getWorldPosition();
         obj.traverse(function(child){
             if(child instanceof THREE.Mesh){
                 if(child.geometry.boundingBox==null)child.geometry.computeBoundingBox();
                 var other=child.geometry.boundingBox;
-                position=child.getWorldPosition();
+                position=new THREE.Vector3().copy(child.getWorldPosition());
+                var testBox2=new THREE.Mesh(new THREE.BoxGeometry(10,10,10),new THREE.MeshBasicMaterial());
+                testBox2.position.copy(position)
+                scope.scene.add(testBox2);
                 if(n){
-                    max.copy( position.add(new THREE.Vector3(other.max.x,other.max.y,other.max.z)));
-                    min.copy( position.add(new THREE.Vector3(other.min.x,other.min.y,other.min.z)));
+                    console.log(position.x);
+                    console.log(other.min.x);
+                    max.copy( new THREE.Vector3().copy(position).add(new THREE.Vector3(other.max.x,other.max.y,other.max.z)));
+                    min.copy( new THREE.Vector3().copy(position).add(new THREE.Vector3(other.min.x,other.min.y,other.min.z)));
+
+                    console.log(min.x);
                     n=false;
                 }
+
+                var testBox3=new THREE.Mesh(new THREE.BoxGeometry(10,10,10),new THREE.MeshBasicMaterial());
+                testBox3.position.copy(min)
+                scope.scene.add(testBox3);
+
                 max.set(Math.max( max.x,position.x+other.max.x),Math.max(max.y,position.y+other.max.y),Math.max(max.z,position.z+other.max.z));
                 min.set(Math.min( min.x,position.x+other.min.x),Math.min(min.y,position.y+other.min.y),Math.min(min.z,position.z+other.min.z));
 
             }
         });
+   //     var testBox=new THREE.Mesh(new THREE.BoxGeometry(10,10,10),new THREE.MeshBasicMaterial());
+   //     testBox.position.copy(max)
+   //     this.scene.add(testBox);
+
+     //  var testBox1=new THREE.Mesh(new THREE.BoxGeometry(10,10,10),new THREE.MeshBasicMaterial());
+     //  testBox1.position.copy(min)
+     //  this.scene.add(testBox1);
+
         center=new THREE.Vector3((max.x+min.x)/2,(max.y+min.y)/2,(max.z+min.z)/2);
         return center;
 
@@ -501,24 +519,35 @@ Editor.prototype = {
 
     resetAxis:function(){
         var position;
-        var max=new THREE.Vector3();
-        var min=new THREE.Vector3();
-        var n=true;
+        var center
         var s=this.selected;
-
         for(var i in s){
+            var c=s[i].children;
             if(s[i].type=="LightObject"){
                 return
             }
-             var c=s[i].children;
+            if(s[i].type=="Mesh"){
+                center= s[i].geometry.center();
+                s[i].position.sub(center);
+                for(var m=0;m< c.length;m++){
+                    c[m].position.add(center);
+                }
+
+                continue;
+            }
+
              var l= c.length;
              var oldPosition=s[i].getWorldPosition();
-             var center=this.getCenter(s[i]);
-             s[i].position.copy( new THREE.Vector3().copy(center).sub(s[i].parent.getWorldPosition()));
-             center.sub(oldPosition);
-             for( var j=0;j<l;j++){
-                 c[j].position.sub(center);
-             }
+             center=this.getCenter(s[i]);
+
+            var testBox=new THREE.Mesh(new THREE.BoxGeometry(10,10,10),new THREE.MeshBasicMaterial());
+            testBox.position.copy(center)
+            this.scene.add(testBox);
+            s[i].position.copy( new THREE.Vector3().copy(center).sub(s[i].parent.getWorldPosition()));
+            center.sub(oldPosition);
+            for( var j=0;j<l;j++){
+                c[j].position.sub(center);
+            }
 
 
         }

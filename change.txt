@@ -103,9 +103,9 @@ case 'LightObject':
   	},
 ================================================three.js
 three.js
-    THREE.TextureµÄtoJSON
+    THREE.Textureï¿½ï¿½toJSON
 
-THREE.ObjectLoader.prototype = {µÄparseImagesºÍ	parseTextures
+THREE.ObjectLoader.prototype = {ï¿½ï¿½parseImagesï¿½ï¿½	parseTextures
 
 
  ================================================three.js
@@ -121,7 +121,7 @@ THREE.DirectionalLightHelper.prototype.update = function () {
 		this.lightPlane.scale.set(scale,scale,scale);
 		v1.setFromMatrixPosition( this.light.matrixWorld );
 
-		¾Û¹âµÆºÍ·½Ïò¹âÎ»ÖÃ£¨0£¬1£¬0£©¸Ä³É£¨0£¬0£¬0£©
+		ï¿½Û¹ï¿½ÆºÍ·ï¿½ï¿½ï¿½ï¿½Î»ï¿½Ã£ï¿½0ï¿½ï¿½1ï¿½ï¿½0ï¿½ï¿½ï¿½Ä³É£ï¿½0ï¿½ï¿½0ï¿½ï¿½0ï¿½ï¿½
 
  ================================================three.js
 
@@ -132,16 +132,19 @@ THREE.DirectionalLightHelper.prototype.update = function () {
     		var children = this.children;
 
     		for ( var i = 0, l = children.length; i < l; i ++ ) {
-    			if(children[ i ]!=undefined){
     				children[ i ].traverse( callback );
     			}
     		}
+    			if(children[ i ]!=undefined){
 
     	},
-	THREE.Object3dÔö¼ÓtraverseÔö¼ÓÒ»¸ö²ÎÊý
+	THREE.Object3dï¿½ï¿½ï¿½ï¿½traverseï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
 
-  	   ´ý¸Ä£º
-                        envmap ÎªTHREE.WebGLRenderTargetCube¼Óprototype.toJSON£»
-                        ¶¨ÖÆ»¯Ò³ÃæµÄÎïÌåÁÐ±í£¬°ÑÎïÌåÁÐ±íºÍµÆ¹âÁÐ±íµÄbodyÌáÈ¡³öÀ´µ÷Õû¸ß¶È
-                        ¶¯»­£¬Åö×²,.dispatch()ÓÐ²»±ØÒªµÄÖØ¸´,×èÁ¦,µÆ¹â¸ú×ÙÎªÊµÊ±äÖÈ¾
+  	   ï¿½ï¿½ï¿½Ä£ï¿½
+                        envmap ÎªTHREE.WebGLRenderTargetCubeï¿½ï¿½prototype.toJSONï¿½ï¿½
+                        ï¿½ï¿½ï¿½Æ»ï¿½Ò³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð±ï¿½ÍµÆ¹ï¿½ï¿½Ð±ï¿½ï¿½bodyï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ß¶ï¿½
+                        ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×²,.dispatch()ï¿½Ð²ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½Ø¸ï¿½,ï¿½ï¿½ï¿½ï¿½,ï¿½Æ¹ï¿½ï¿½ï¿½ï¿½ÎªÊµÊ±ï¿½ï¿½È¾
+================================================three.js
+THREE.Box3.prototype = {
+setFromObject:

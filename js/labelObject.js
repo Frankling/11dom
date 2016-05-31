@@ -61,7 +61,7 @@ var labelObject=function(editor){
 
             var geo=new THREE.Geometry();
             geo.vertices.push(new THREE.Vector3(0,0,0),new THREE.Vector3(0.1,0.1,0.1));
-            var mat=new THREE.LineBasicMaterial();
+            var mat=new THREE.LineBasicMaterial({color:0x00FFFF});
             var line=new THREE.Line(geo,mat);
             return line;
         };
@@ -188,6 +188,7 @@ var labelObject=function(editor){
            line=createLine(hasLabel);
            labelObject3D.add(label,line,plane);
            mesh.add(labelObject3D);
+           labelObject3D.position.copy(point);
        }else{
            labelObject3D=hasLabel.parent;
            label=hasLabel;
@@ -198,7 +199,7 @@ var labelObject=function(editor){
         label.normal=normal;
         spriteContent=createContent();
         spriteContent.id=label.uuid+"V";
-        labelObject3D.position.copy(point);
+
 
         //  testBox.position.copy(line.geometry.vertices[0]);
 
@@ -216,13 +217,13 @@ var labelObject=function(editor){
 
     };
    this.removeLabel=function(editor,label,viewport){
-        var c=label.children[0]
+        var c=label;
         delete editor.selected[c.uuid];
         delete editor.labels[c.uuid];
         editor.signals.removeLabel.dispatch(c);
         viewport.removeChild(document.getElementById(c.uuid+"V"));
         labelContent.removeChild(document.getElementById(c.uuid));
-        editor.removeObject(label);
+        editor.removeObject(label.parent);
 
     };
    this.updateNowPosition=function(objParent){
@@ -243,12 +244,13 @@ var labelObject=function(editor){
         var lineGeo=obj.parent.children[1].geometry;
         var v0=new THREE.Vector3().copy(lineGeo.vertices[0]);
         var v1=new THREE.Vector3().copy(lineGeo.vertices[1]);
-        var leftSl=parseInt(children.children[0].children[0].style.width)
+        var leftSl=parseInt(children.offsetWidth);
         var leftOffset=0;
         var topOffset=0;
         projector.projectVector(v0,camera);
         projector.projectVector(v1,camera);
-        if(v0.x>v1.x) leftOffset=-leftSl-25;
+       console.log(children.offsetWidth);
+        if(v0.x>v1.x) leftOffset=-leftSl;
         if(v0.y<v1.y) topOffset=-40;
 
 

@@ -61,7 +61,7 @@ Menubar.labels = function ( editor ) {
         for(var i in selected){
             if(labels.hasOwnProperty( i)){
 
-                labelObject.removeLabel(editor,labels[i],viewport);
+                labelObject.removeLabel(editor,labels[i].children[0],viewport);
             }
 
         }
