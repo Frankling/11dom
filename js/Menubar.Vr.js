@@ -1099,6 +1099,8 @@ Menubar.Vr = function (editor) {
 
 //更新热点位置
 var updateHotSpotPosition=function(obj){
+    obj.material.opacity = 0;
+    //editor.skybox.scale.x = -1;
     obj.position.x = - obj.position.x;
     var viewport=document.getElementById("viewport");
     var projector=new THREE.Projector();

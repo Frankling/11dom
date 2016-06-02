@@ -172,18 +172,11 @@ var Tool= function ( editor ) {
         dataBase.labels={};
         var label=editor.labels;
         for(var i in label){
-        //    var child=document.getElementById(i+"V");
             var labelS=label[i].children[0];
-           dataBase.labels[i]={};
-        //   dataBase.labels[i].enableLine    =labelS.enableLine;
-       //    dataBase.labels[i].lineHeight    =labelS.lineHeight;
-           dataBase.labels[i].title          =labelS.title;
-         //  dataBase.labels[i].cssType        =labelS.cssType;
-           dataBase.labels[i].cameraPosition=labelS.cameraPosition;
-           dataBase.labels[i].normal={x:labelS.normal.x,y:labelS.normal.y,z:labelS.normal.z};
-            //   dataBase.labels[i].display=label[i].display;
-         //  dataBase.labels[i].ROrL=label[i].ROrL;
-
+            dataBase.labels[i]={};
+            dataBase.labels[i].title          =labelS.title;
+            dataBase.labels[i].cameraPosition=labelS.cameraPosition;
+            dataBase.labels[i].normal={x:labelS.normal.x,y:labelS.normal.y,z:labelS.normal.z};
         }
 
         dataBase.camera = editor.camera;

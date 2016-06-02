@@ -282,6 +282,13 @@ html, body {
     padding:2px 2px 0 20px;
     float: left;
 }
+.attrRow .text1 {
+    /*width: 28px;*/
+    color: #aaaaaa;
+    line-height: 30px;
+    padding:2px 2px 0 15px;
+    float: left;
+}
 .attrRow .box {
     width: 42px;
     height: 30px;
