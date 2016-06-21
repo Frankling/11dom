@@ -84,7 +84,7 @@ Menubar.labels = function ( editor ) {
 
                 var normal=intersects[0].face.normal;
                 var object=intersects[0].object;
-                var point=intersects[0].point.sub(object.getWorldPosition());
+                var point=intersects[0].point;
 
                 if(object instanceof THREE.Mesh){
                     labelObject.createLabel(object,point,undefined,normal);

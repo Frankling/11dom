@@ -481,74 +481,99 @@ Editor.prototype = {
         var center;
         obj.traverse(function(child){
             if(child instanceof THREE.Mesh){
-                if(child.geometry.boundingBox==null)child.geometry.computeBoundingBox();
-                var other=child.geometry.boundingBox;
-                position=new THREE.Vector3().copy(child.getWorldPosition());
-                var testBox2=new THREE.Mesh(new THREE.BoxGeometry(10,10,10),new THREE.MeshBasicMaterial());
-                testBox2.position.copy(position)
-                scope.scene.add(testBox2);
-                if(n){
-                    console.log(position.x);
-                    console.log(other.min.x);
-                    max.copy( new THREE.Vector3().copy(position).add(new THREE.Vector3(other.max.x,other.max.y,other.max.z)));
-                    min.copy( new THREE.Vector3().copy(position).add(new THREE.Vector3(other.min.x,other.min.y,other.min.z)));
 
-                    console.log(min.x);
+                if(child.geometry.boundingBox==null)child.geometry.computeBoundingBox();
+                var other=new THREE.Box3().copy(child.geometry.boundingBox);
+                other.applyMatrix4(child.matrixWorld);
+                position=new THREE.Vector3().copy(child.getWorldPosition());
+
+                if(n){
+
+                    max.copy(new THREE.Vector3(other.max.x,other.max.y,other.max.z));
+                    min.copy(new THREE.Vector3(other.min.x,other.min.y,other.min.z));
+
+
                     n=false;
                 }
-
-                var testBox3=new THREE.Mesh(new THREE.BoxGeometry(10,10,10),new THREE.MeshBasicMaterial());
-                testBox3.position.copy(min)
-                scope.scene.add(testBox3);
-
-                max.set(Math.max( max.x,position.x+other.max.x),Math.max(max.y,position.y+other.max.y),Math.max(max.z,position.z+other.max.z));
-                min.set(Math.min( min.x,position.x+other.min.x),Math.min(min.y,position.y+other.min.y),Math.min(min.z,position.z+other.min.z));
+                max.set(Math.max( max.x,other.max.x),Math.max(max.y,other.max.y),Math.max(max.z,other.max.z));
+                min.set(Math.min( min.x,other.min.x),Math.min(min.y,other.min.y),Math.min(min.z,other.min.z));
 
             }
         });
-   //     var testBox=new THREE.Mesh(new THREE.BoxGeometry(10,10,10),new THREE.MeshBasicMaterial());
-   //     testBox.position.copy(max)
-   //     this.scene.add(testBox);
 
-     //  var testBox1=new THREE.Mesh(new THREE.BoxGeometry(10,10,10),new THREE.MeshBasicMaterial());
-     //  testBox1.position.copy(min)
-     //  this.scene.add(testBox1);
 
         center=new THREE.Vector3((max.x+min.x)/2,(max.y+min.y)/2,(max.z+min.z)/2);
         return center;
 
     },
 
-    resetAxis:function(){
-        var position;
-        var center
+    resetAxis:function(offset){
+
         var s=this.selected;
         for(var i in s){
+            var center;
+
             var c=s[i].children;
+            var l= c.length;
+
             if(s[i].type=="LightObject"){
+
                 return
-            }
-            if(s[i].type=="Mesh"){
-                center= s[i].geometry.center();
-                s[i].position.sub(center);
-                for(var m=0;m< c.length;m++){
-                    c[m].position.add(center);
+
+            }else if(s[i].type=="Mesh"){
+                if(offset){
+                    offset.x=- offset.x;
+                    offset.y=- offset.y;
+                    offset.z=- offset.z;
+
+                    center=offset;
+
+                    var RotPosMat4=new THREE.Matrix4().copy(s[i].matrixWorld);
+                    RotPosMat4.elements[12]=  RotPosMat4.elements[13]=  RotPosMat4.elements[14]=0;
+                    center.applyMatrix4(new THREE.Matrix4().getInverse(RotPosMat4));
+
+                    s[i].geometry.translate( center.x, center.y, center.z )
+                }else {
+                    center = s[i].geometry.center();
+                }
+                s[i].translateX( -center.x);
+                s[i].translateY( -center.y);
+                s[i].translateZ( -center.z);
+
+
+                for( var j=0;j<l;j++){
+                    c[j].translateX( center.x);
+                    c[j].translateY( center.y);
+                    c[j].translateZ( center.z);
                 }
 
-                continue;
-            }
 
-             var l= c.length;
-             var oldPosition=s[i].getWorldPosition();
-             center=this.getCenter(s[i]);
+            }else{
+                var oldPosition=s[i].getWorldPosition();
+                if(offset){
+                    center=offset;
 
-            var testBox=new THREE.Mesh(new THREE.BoxGeometry(10,10,10),new THREE.MeshBasicMaterial());
-            testBox.position.copy(center)
-            this.scene.add(testBox);
-            s[i].position.copy( new THREE.Vector3().copy(center).sub(s[i].parent.getWorldPosition()));
-            center.sub(oldPosition);
-            for( var j=0;j<l;j++){
-                c[j].position.sub(center);
+                }else{
+                    center=this.getCenter(s[i]);
+                    center.sub(oldPosition);
+
+                }
+
+                var pRotPosMat4=new THREE.Matrix4().copy(s[i].parent.matrixWorld);
+                pRotPosMat4.elements[12]=  pRotPosMat4.elements[13]=  pRotPosMat4.elements[14]=0;
+                var centerP=new THREE.Vector3().copy(center).applyMatrix4(new THREE.Matrix4().getInverse(pRotPosMat4));
+
+                s[i].position.add(centerP);
+
+                var RotPosMat4=new THREE.Matrix4().copy(s[i].matrixWorld);
+                RotPosMat4.elements[12]=  RotPosMat4.elements[13]=  RotPosMat4.elements[14]=0;
+                center.applyMatrix4(new THREE.Matrix4().getInverse(RotPosMat4));
+
+                for( var j=0;j<l;j++){
+                    c[j].position.sub(center);
+                }
+
+
             }
 
 
@@ -720,7 +745,48 @@ Editor.prototype = {
                     if(addParentObj==editor.allObject3D){
                         addParentObj=editor.scene;
                     }
+                  
+                    var oldMat4   =addChildObj.parent.matrixWorld;
+                    var newMat4   =addParentObj.matrixWorld;
+                    var offsetMat4=new THREE.Matrix4().multiplyMatrices(new THREE.Matrix4().getInverse(newMat4),oldMat4);
+                //    var childRota  =new THREE.Matrix4().extractRotation(addChildObj.matrixWorld);
+                    var oldPosition=new THREE.Vector3().copy(addChildObj.position);
+
+                   //var newChildMat4=new THREE.Matrix4().multiplyMatrices(offsetMat4,addChildObj.matrix);
+                 //   alert( addChildObj.matrixWorld.elements[12]);
+
+                    var endMat4=new THREE.Matrix4().multiplyMatrices(offsetMat4,addChildObj.matrix);
+                  //  var endWat4=new THREE.Matrix4().multiplyMatrices(addChildObj.matrixWorld,new THREE.Matrix4().getInverse(offsetMat4));
+
+                 //   nicai0=new THREE.Matrix4().copy(oldMat4);
+                 //   nicai1=new THREE.Matrix4().copy(endWat4);
+
                     addParentObj.add(addChildObj);
+
+                    var rmat4=new THREE.Matrix4().extractRotation(endMat4);
+                    var pmat4=new THREE.Matrix4().extractPosition(endMat4);
+                 //   var smat4=new THREE.Matrix4().extractRotation(endMat4);
+
+                    addChildObj.rotation.setFromRotationMatrix(rmat4);
+                    addChildObj.scale.setFromMatrixScale(endMat4);
+                    addChildObj.position.setFromMatrixPosition(pmat4);
+
+                    // var newPosition=addChildObj.position;
+                    // var offsetP=new THREE.Vector3().copy(newPosition).sub(oldPosition);
+
+
+
+              //     addChildObj.position.applyEuler(new THREE.Euler(-addChildObj.rotation.x,-addChildObj.rotation.y,-addChildObj.rotation.z));
+                   // var offsetRP=offsetP.applyMatrix4(new THREE.Matrix4().extractRotation(endMat4));
+                   // console.log(offsetRP);
+                   // testBox=new THREE.Mesh(new THREE.BoxGeometry(5,5,5),new THREE.MeshBasicMaterial());
+                   // testBox.position.copy(offsetRP);
+                   // editor.scene.add(testBox)
+                   // addChildObj.position.add(offsetRP);
+
+
+
+                 //   alert( addChildObj.matrixWorld.elements[12]);
                 }
 
             }

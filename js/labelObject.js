@@ -187,8 +187,18 @@ var labelObject=function(editor){
            label=createSprite(hasLabel);
            line=createLine(hasLabel);
            labelObject3D.add(label,line,plane);
-           mesh.add(labelObject3D);
+           //labelObject3D.position.copy(point);
+           var offsetP=mesh.getWorldPosition();
+           var offsetR=mesh.getWorldRotation();
+           point.sub(offsetP);
+           var m=new THREE.Matrix4().getInverse(new THREE.Matrix4().extractRotation(mesh.matrixWorld));
+           point.applyMatrix4(m);
            labelObject3D.position.copy(point);
+           mesh.add(labelObject3D);
+
+
+
+
        }else{
            labelObject3D=hasLabel.parent;
            label=hasLabel;
@@ -231,8 +241,16 @@ var labelObject=function(editor){
 
         var viewport=document.getElementById("viewport");
         var projector=new THREE.Projector();
-        var point=(new THREE.Vector3().copy(objParent.children[1].geometry.vertices[1])).add(objParent.getWorldPosition());
+        var v1=objParent.children[1].geometry.vertices[1];
+        var mat4=new THREE.Matrix4().extractRotation(objParent.matrixWorld);
+        var scale=new THREE.Vector3().setFromMatrixScale( objParent.matrixWorld  );
+
+        var point=(new THREE.Vector3().copy(v1).multiply(scale).applyMatrix4(  mat4)).add(objParent.getWorldPosition());//.applyMatrix4(  mat4));
+
+
         var point2d=new THREE.Vector3().copy(point);
+
+
         projector.projectVector(point2d,editor.camera);
         var obj=objParent.children[0];
         scope.updateLabelPosition(obj,point,point2d);
@@ -249,7 +267,7 @@ var labelObject=function(editor){
         var topOffset=0;
         projector.projectVector(v0,camera);
         projector.projectVector(v1,camera);
-       console.log(children.offsetWidth);
+
         if(v0.x>v1.x) leftOffset=-leftSl;
         if(v0.y<v1.y) topOffset=-40;
 
