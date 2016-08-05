@@ -8,6 +8,7 @@ THREE.Animation = function ( root, data ) {
 
 	this.root = root;
 	this.data = THREE.AnimationHandler.init( data );
+
 	this.hierarchy = THREE.AnimationHandler.parse( root );
 
 	this.currentTime = 0;
@@ -17,6 +18,7 @@ THREE.Animation = function ( root, data ) {
 	this.loop = true;
 	this.weight = 0;
 
+//	this.allowUpdate=true;
 	this.interpolationType = THREE.AnimationHandler.LINEAR;
 
 };
@@ -89,15 +91,61 @@ THREE.Animation.prototype = {
 
 				var type = this.keyTypes[ t ];
 
-				var prevKey = this.data.hierarchy[ h ].keys[ 0 ];
-				var nextKey = this.getNextKeyWith( type, h, 1 );
+				var preI=0;
+				var length=this.data.hierarchy[ h ].keys.length;
+				var prevKey = this.data.hierarchy[ h ].keys[ preI ];
+				while(prevKey==undefined&&preI<length){
+					preI++;
+					prevKey=this.data.hierarchy[ h ].keys[ preI ];
+
+				}
+
+				var nextKey;
+				while(nextKey==undefined&&preI<length){
+
+					preI++;
+					nextKey = this.getNextKeyWith( type, h,preI );
+
+				}
+				if(prevKey==undefined){
+
+					THREE.AnimationHandler.animations.remove(this);
+					return;
+				}
+				if(nextKey==undefined){
+					nextKey=prevKey;
+				}
+
+
 
 				while ( nextKey.time < this.currentTime && nextKey.index > prevKey.index ) {
 
 					prevKey = nextKey;
-					nextKey = this.getNextKeyWith( type, h, nextKey.index + 1 );
+					var nextKeyI= nextKey.index + 1;
+					nextKey = this.getNextKeyWith( type, h, nextKeyI );
+					while(nextKey==undefined){
+						nextKeyI++;
+						nextKey = this.getNextKeyWith( type, h,nextKeyI );
+					}
+
+
 
 				}
+
+				while ( prevKey.time > this.currentTime && nextKey.index > prevKey.index ) {
+					nextKey=prevKey;
+					var preKeyI=length-1;
+					prevKey= this.getNextKeyWith( type, h,preKeyI );
+					while(nextKey==undefined){
+						preKeyI--;
+						prevKey = this.getNextKeyWith( type, h,preKeyI );
+					}
+
+
+
+
+				}
+
 
 				animationCache.prevKey[ type ] = prevKey;
 				animationCache.nextKey[ type ] = nextKey;
@@ -180,9 +228,35 @@ THREE.Animation.prototype = {
 
 		return function ( delta ) {
 
+
 			if ( this.isPlaying === false ) return;
 
-			this.currentTime += delta * this.timeScale;
+
+			function accAdd(num1,num2){
+				var r1,r2,m;
+				try{
+					r1 = num1.toString().split('.')[1].length;
+				}catch(e){
+					r1 = 0;
+				}
+				try{
+					r2=num2.toString().split(".")[1].length;
+				}catch(e){
+					r2=0;
+				}
+				m=Math.pow(10,Math.max(r1,r2));
+				// return (num1*m+num2*m)/m;
+				return Math.round(num1*m+num2*m)/m;
+			}
+
+
+			var sun=accAdd(
+				this.currentTime,
+				delta * this.timeScale
+			);
+
+			//if(sun<0)sun=0;
+			this.currentTime = sun;
 
 			if ( this.weight === 0 )
 				return;
@@ -191,7 +265,13 @@ THREE.Animation.prototype = {
 
 			var duration = this.data.length;
 
-			if ( this.currentTime > duration || this.currentTime < 0 ) {
+
+			if( duration+0.00001>=this.currentTime &&this.currentTime>= duration-0.00001){
+				this.currentTime=duration;
+			}
+
+
+			if ( this.currentTime >= duration|| this.currentTime < 0 ) {
 
 				if ( this.loop ) {
 
@@ -227,23 +307,73 @@ THREE.Animation.prototype = {
 					var nextKey = animationCache.nextKey[ type ];
 
 					if ( ( this.timeScale > 0 && nextKey.time <= this.currentTime ) ||
-						( this.timeScale < 0 && prevKey.time >= this.currentTime ) ) {
+						( this.timeScale > 0 && prevKey.time >= this.currentTime ) ) {
 
-						prevKey = this.data.hierarchy[ h ].keys[ 0 ];
-						nextKey = this.getNextKeyWith( type, h, 1 );
+
+
+
+					    var keyCurrent=0;
+						var keyLength= this.data.hierarchy[ h ].keys.length;
+					    prevKey = this.data.hierarchy[ h ].keys[ keyCurrent ];
+
+						while(prevKey==undefined&&keyCurrent<keyLength){
+
+							keyCurrent++;
+					    	prevKey=this.data.hierarchy[ h ].keys[ keyCurrent];
+
+					    }
+						keyCurrent++;
+					    nextKey = this.getNextKeyWith( type, h, keyCurrent);
+
+					     while(nextKey==undefined&&keyCurrent<keyLength){
+
+							 keyCurrent++;
+					     	 nextKey = this.getNextKeyWith( type, h,keyCurrent );
+
+					     }
+
+						if(prevKey==undefined){
+
+							THREE.AnimationHandler.animations.remove(this);
+							return;
+						}
+						if(nextKey==undefined){
+							nextKey=prevKey;
+						}
+
+
 
 						while ( nextKey.time < this.currentTime && nextKey.index > prevKey.index ) {
 
 							prevKey = nextKey;
-							nextKey = this.getNextKeyWith( type, h, nextKey.index + 1 );
+							var nextKeyI= nextKey.index + 1;
+
+							nextKey = this.getNextKeyWith( type, h, nextKeyI );
+							while(nextKey==undefined){
+								nextKeyI++;
+								nextKey = this.getNextKeyWith( type, h,nextKeyI );
+							}
 
 						}
 
+						while ( prevKey.time >= this.currentTime && nextKey.index > prevKey.index ) {
+							nextKey=prevKey;
+							var preKeyI=keyLength-1;
+							prevKey= this.getNextKeyWith( type, h,preKeyI );
+							while(nextKey==undefined){
+								preKeyI--;
+								prevKey = this.getNextKeyWith( type, h,preKeyI );
+							}
+
+						}
 						animationCache.prevKey[ type ] = prevKey;
 						animationCache.nextKey[ type ] = nextKey;
 
 					}
 
+					 if(nextKey.time== prevKey.time){
+					 	return
+					 }
 					var scale = ( this.currentTime - prevKey.time ) / ( nextKey.time - prevKey.time );
 
 					var prevXYZ = prevKey[ type ];
@@ -263,6 +393,7 @@ THREE.Animation.prototype = {
 							newVector.z = prevXYZ[ 2 ] + ( nextXYZ[ 2 ] - prevXYZ[ 2 ] ) * scale;
 
 							// blend
+
 							var proportionalWeight = this.weight / ( this.weight + blending.positionWeight );
 							object.position.lerp( newVector, proportionalWeight );
 							blending.positionWeight += this.weight;
@@ -349,6 +480,7 @@ THREE.Animation.prototype = {
 
 		var keys = this.data.hierarchy[ h ].keys;
 
+
 		if ( this.interpolationType === THREE.AnimationHandler.CATMULLROM ||
 			 this.interpolationType === THREE.AnimationHandler.CATMULLROM_FORWARD ) {
 
@@ -361,12 +493,14 @@ THREE.Animation.prototype = {
 		}
 
 		for ( ; key < keys.length; key ++ ) {
+			if ( keys[ key ]!==undefined){
+				if ( keys[ key ][ type ] !== undefined ) {
 
-			if ( keys[ key ][ type ] !== undefined ) {
+					return keys[ key ];
 
-				return keys[ key ];
-
+				}
 			}
+
 
 		}
 
@@ -402,6 +536,15 @@ THREE.Animation.prototype = {
 
 		return this.data.hierarchy[ h ].keys[ keys.length - 1 ];
 
+	},
+
+	toJSON:function(){
+		var data=this.data;
+		data.root=this.root.uuid;
+		var dataStr=JSON.stringify(data);
+		var deleteNull=dataStr.replace(/null,/g,"");
+        delete data['root'];
+		return deleteNull;
 	}
 
 };

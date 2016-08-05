@@ -191,8 +191,15 @@ var labelObject=function(editor){
            var offsetP=mesh.getWorldPosition();
            var offsetR=mesh.getWorldRotation();
            point.sub(offsetP);
-           var m=new THREE.Matrix4().getInverse(new THREE.Matrix4().extractRotation(mesh.matrixWorld));
-           point.applyMatrix4(m);
+
+           var matrix=new THREE.Matrix4();
+           var matrixWorld=matrix.copy(mesh.matrixWorld);
+           matrixWorld.elements[12]=  matrixWorld.elements[13]=  matrixWorld.elements[14]=0;
+
+           var realyMatrix=matrix.getInverse(matrixWorld);
+
+         //  var m=new THREE.Matrix4().getInverse(new THREE.Matrix4().extractRotation(mesh.matrixWorld));
+           point.applyMatrix4(realyMatrix);
            labelObject3D.position.copy(point);
            mesh.add(labelObject3D);
 
@@ -273,7 +280,20 @@ var labelObject=function(editor){
 
 
         var ca=camera.position;
-        var co=control.target;
+
+        var co;
+       if(control instanceof THREE.Firstperson){
+           var cameraP=editor.camera.position;
+           var cameraRM=new THREE.Matrix4().extractRotation(editor.camera.matrixWorld);
+           var v=new THREE.Vector3(0,-cameraP.y,-cameraP.z);
+           v.applyMatrix4(cameraRM);
+           v.add(cameraP);
+           co=v;
+
+       }else if(control instanceof  THREE.OrbitControls){
+           co=control.target;
+       }
+
         var vcc=new THREE.Vector3(ca.x-co.x,ca.y-co.y,ca.z-co.z);
         var normal=new THREE.Vector3().copy(obj.normal);
         // var tempMatrix=new THREE.Matrix4();

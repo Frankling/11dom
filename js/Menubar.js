@@ -9,5 +9,6 @@ var Menubar = function ( editor ) {
     container.add(new Menubar.Vr(editor));
 
     container.add(new Menubar.labels(editor));
+
     return container;
 };

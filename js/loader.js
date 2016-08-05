@@ -125,35 +125,78 @@ var Loader = function ( editor ) {
 				var reader = new FileReader();
 				reader.addEventListener( 'load', function ( event ) {
 
+					var animate=function(kfAnimation){
 
+						return function(){
+							kfAnimation.play(500);
+							var decal=10;
+							var time=0;
+							var timeLength=kfAnimation.data.length*1000;
+							console.log(kfAnimation);
+							var update=function(){
+								if(time<=timeLength){
+									kfAnimation.update(decal);
+									editor.signals.sceneGraphChanged.dispatch();
+									time+=decal;
+									requestAnimationFrame(update);
+								}else{
+									kfAnimation.stop();
+								}
+							}
+							update();
+
+						}
+					};
 
 					var contents = event.target.result;
 					var loader = new THREE.ColladaLoader();
 					var collada = loader.parse( contents ,function(child){
-						console.log(child);
-						var time=0;
+
 						var kfAnimations=[];
-						var allTime;
+					//	var allTime;
 						var animations = child.animations;
+						console.log(animations[0]);
 						var scene=child.scene;
 						scene.scale.x=scene.scale.y=scene.scale.z=8;
 						var l=animations.length;
-						var progress=0;
 
 						for(var j = 0; j < l; ++j ){
 							var animation = animations[ j ];
-							allTime=Math.max(allTime||0,animation.length);
-							kfAnimations.push(new THREE.KeyFrameAnimation( animation ));
+						//	allTime=Math.max(allTime||0,animation.length);
+							var kfAnimation=new THREE.KeyFrameAnimation( animation )
+							console.log(kfAnimation);
+							kfAnimations.push(kfAnimation);
+
+						//	kfAnimation.loop=true;
+							//kfAnimation.play();
+							var hierarchy=kfAnimation.hierarchy;
+							var hl=kfAnimation.hierarchy.length;
+							for(var i=0;i<hl;i++){
+								hierarchy[i].animate=animate(kfAnimation);
+							}
+
 						}
 
-						var start=function(){
+
+
+					/*	var animate=function(a,b){
+							//for(var i=0;i<l;i++){
+							//	kfAnimations[i].update(10);
+							//}
+							editor.signals.sceneGraphChanged.dispatch();
+
+							requestAnimationFrame(animate)
+						}
+						animate();*/
+				//		console.log(kfAnimations);
+			/*			var start=function(){
 							for ( var i = 0; i < l; ++i ) {
 
 								var kfAnimation = kfAnimations[i];
 
 
 								var hl=kfAnimation.hierarchy.length;
-
+/!*
 								for( var h = 0; h < hl; h++ ){
 									var keys = kfAnimation.data.hierarchy[ h ].keys;
 									var sids = kfAnimation.data.hierarchy[ h ].sids;
@@ -172,15 +215,15 @@ var Loader = function ( editor ) {
 										kfAnimation.data.hierarchy[ h ].node.updateMatrix();
 										obj.matrixWorldNeedsUpdate = true;
 									}
-								}
+								}*!/
 								kfAnimation.loop = false;
-								kfAnimation.play();
-							}
-						};
-						start();
+							kfAnimation.play();
+						}
+					};
+					start();
 
 
-						var animate=function(a){
+					var animate=function(a){
 
 							var delay=10;
 							if ( progress >= 0 && progress < allTime*1000 ) {
@@ -202,7 +245,7 @@ var Loader = function ( editor ) {
 							requestAnimationFrame(animate);
 
 						};
-						animate(0);
+						animate(0);*/
 						scene.name = filename;
 						editor.addObject(scene );
 						editor.select(scene );
@@ -299,6 +342,7 @@ var Loader = function ( editor ) {
 						var contents = event.target.result;
 
 						var geometry = new THREE.MD2Loader().parse( contents );
+						console.log(geometry);
 						var material = new THREE.MeshPhongMaterial( {
 							morphTargets: true,
 							morphNormals: true

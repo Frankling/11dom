@@ -18,6 +18,7 @@ var Editor = function () {
         addLabel:new SIGNALS.Signal(),
         removeLabel:new SIGNALS.Signal(),
         envmappingChange:new SIGNALS.Signal(),
+        loadEnd:new SIGNALS.Signal(),
         initTHREE:{
             initGlobalLight:new SIGNALS.Signal(),
             initGlobalControls:new SIGNALS.Signal(),
@@ -39,7 +40,7 @@ var Editor = function () {
 
     this.Grid=new THREE.GridHelper(100,10);
 
-    this.camera = new THREE.PerspectiveCamera( 45, 2, 1, 100000 );
+    this.camera = new THREE.PerspectiveCamera( 45, 2, 1, 10000000 );
     this.camera.position.set(0, 0, 1000 );
     this.camera.lookAt( new THREE.Vector3(0,0,0) );
     this.camera.name = 'Camera';
@@ -84,7 +85,7 @@ var Editor = function () {
     this.requestLoop = false;
     this.traceCamera={};
     this.rcube=new THREE.CubeTextureLoader().load(["rcube/1_BK.jpg","rcube/1_DN.jpg","rcube/1_FR.jpg","rcube/1_LF.jpg","rcube/1_RT.jpg","rcube/1_UP.jpg"]);
-    this.loadEndV=[false,false];
+    this.loadEndV=0;
     this.geometriesText={};
 
 
@@ -211,13 +212,9 @@ Editor.prototype = {
 
     },
     loadEnd:function(){
+         if(this.loadEndV==2){
 
-        var _initTHREE=new initTHREE(this);
-         if(this.loadEndV[0]&&this.loadEndV[1]){
-
-             _initTHREE.initTraceCamera();
-             _initTHREE.initLabel();
-             editor.signals.sceneGraphChanged.dispatch();
+             editor.signals.loadEnd.dispatch();
 
          }
     },
@@ -229,7 +226,7 @@ Editor.prototype = {
         if ( json.scene === undefined ) {
             loader.parse( json ,function(object){
                 scope.setScene( object,parent );
-                scope.loadEndV[1]=true;
+                scope.loadEndV++;
                 scope.loadEnd();
             });
 
@@ -939,6 +936,9 @@ Editor.prototype = {
     refreshLabelUI:function(label,bool,title,type,length){
 
         this.signals.refreshLabelUI.dispatch(label,bool,title,type,length);
+    },
+    keyAnimate:function(object,stareTime,endTime){
+
     }
 
 };

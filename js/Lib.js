@@ -170,6 +170,7 @@ var Lib= function ( editor ) {
 
     $(".panel-close,.title").bind("click",function(){
 
+
         var _div=$(".side_panel");
         options.dom.style.left = 50 + "px";
         var viewport=document.getElementById("viewport");

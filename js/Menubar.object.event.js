@@ -28,10 +28,9 @@ var eventUI = function (editor) {
     eventBody.dom.style.display = "none";
 
 
-
-
     return eventAttributes;
 };
+
 (function(){
     var container = new UI.Panel();
     container.setId("eventEditor");

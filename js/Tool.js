@@ -296,7 +296,7 @@ var Tool= function ( editor ) {
         var sceneGlobal = editor.skybox.toJSON();
         var sceneGlobal1= JSON.stringify(sceneGlobal );
         var data1= JSON.stringify(dataBase);
-
+        editor.animationToJSON();
         saveAs(new Blob([scene1]  ,{type: "text/plain;charset=utf-8"}),"scene.json");
         saveAs(new Blob([sceneBG1]  ,{type: "text/plain;charset=utf-8"}),"sceneBG.json");
         saveAs(new Blob([data1]  ,{type: "text/plain;charset=utf-8"}),"dataBase.json");

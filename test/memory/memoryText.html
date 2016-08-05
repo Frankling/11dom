@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+<script>
+    (function(){
+        var a=function(){
+            this.att=0;
+            this.f={};
+            for(var i=0;i<100000;i++){
+                this.f[i]=i;
+            }
+
+        }
+        a.prototype={
+            add:function(){
+                this.att++;
+            },
+            sub:function(){
+                this.att--;
+            },
+            reset:function(){
+                this.att=0;
+            }
+        };
+
+        var d=new a();
+        window.add=d.add
+
+    })();
+
+</script>
+</body>
+</html>

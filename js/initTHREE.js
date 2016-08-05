@@ -158,7 +158,7 @@
         });
         loader.load(dataBaseFile, function ( text ) {
             dataBase=JSON.parse(text);
-            editor.loadEndV[0]=true;
+            editor.loadEndV++;
             editor.loadEnd();
             _initTHREE.initGlobalControls();
             _initTHREE.initBackground();
@@ -193,5 +193,11 @@
             xmlDoc=text;
             editor.signals.sceneGraphChanged.dispatch();
         });
+        editor.signals.loadEnd.add(function(){
+            _initTHREE.initTraceCamera();
+            _initTHREE.initLabel();
+            editor.signals.sceneGraphChanged.dispatch();
+        })
+
 
     })();

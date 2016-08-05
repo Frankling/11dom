@@ -33,6 +33,7 @@
 
 <script src="js/libs/loaders/AssimpJSONLoader.js"></script>
 <script src="js/libs/loaders/OBJLoader.js"></script>
+<script src="js/libs/loaders/MD2Loader.js"></script>
 <script src="js/libs/loaders/MTLLoader.js"></script>
 <script src="js/libs/loaders/OBJMTLLoader.js"></script>
 <script src="js/libs/loaders/ColladaLoader.js"></script>
@@ -79,6 +80,7 @@
 <script src="js/Menubar.light.js"></script>
 <script src="js/Menubar.scenarios.js"></script>
 <script src="js/Menubar.Vr.js"></script>
+<script src="js/Menubar.object.animation.js"></script>
 <script src="js/Tool.js"></script>
 <script src="js/Lib.js"></script>
 <script src="js/Viewport.js"></script>
@@ -87,6 +89,7 @@
 
     var editor = new Editor();
     var labelObject = new labelObject(editor);
+
 
     var Share=  new Share(editor);
 
@@ -102,25 +105,34 @@
     var lib = new Lib(  editor );
     document.body.appendChild(lib.dom );
 
-    
+
     window.onkeydown=function(event){
+
+        editor.keyCode={};
         switch ( event.keyCode ) {
             case 17: // ctrl
+
                 editor.keyCode["ctrl"]=true;
+                break;
+            case 46: // ctrl
+                editor.deleteFrame();
                 break;
         }
     };
     window.onkeyup=function(event){
-        switch ( event.keyCode ) {
-            case 17: // ctrl
+
+      //  switch ( event.keyCode ) {
+      //      case 17: // ctrl
                 editor.keyCode={};
-                break;
-        }
+       //         break;
+//
+       // }
     };
 
     editor.signals.windowResize.dispatch();
 
 </script>
+<script src="js/keyAnimationObj.js"></script>
 <script src="js/Menubar.object.hiddenList.js"></script>
 <script src="js/initTHREE.js"></script>
 </body>

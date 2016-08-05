@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<style>
+    html,body{
+        height: 100%;
+        width: 100%;
+    }
+    .td{
+        width: 5%;
+        height: 50%;
+        background: #123123;
+    }
+</style>
+<body>
+<div id='table'style="width: 80%;height: 10%;background:#123456 ">
+
+</div>
+<script>
+    (function(){
+        for(var i=0;i<20;i++){
+            var td=document.createElement('td');
+            td.className="td";
+            document.getElementById('table').appendChild(td);
+        }
+
+    })();
+
+</script>
+</body>
+</html>

@@ -38,7 +38,7 @@ var Viewport=function(editor){
   //  editor.controls.dampingFactor  =  1;
     editor.controls.addEventListener('change', function (){
         editor.signals.cameraChanged.dispatch(editor.camera);
-        editor.controls.update();
+      //  editor.controls.update();
     });
 
     var transformControls=new THREE.MyTransformControls(editor.camera,canvas);
@@ -72,6 +72,7 @@ var Viewport=function(editor){
 
             if (intersects.length > 0 && !transformControls.hasIntersect) {
                 var select=intersects[0].object;
+
                 editor.select(select);
                 if(intersects[0].object.hasOwnProperty("cameraPosition")){
                     if(isDoubleClick){
@@ -363,7 +364,20 @@ var Viewport=function(editor){
     });
     signals.objectRemove.add(function(object){
         var objs=[];
+        var animations=THREE.AnimationHandler.animations;
         object.traverse( function ( child ) {
+
+            var l=animations.length;
+            while(l) {
+                l--;
+                if(animations[l].root==child){
+                    animations.remove(animations[l]);
+                }
+            }
+
+
+
+
             if(child instanceof  THREE.Mesh||child instanceof THREE.Sprite){
 
                  if(editor.labels.hasOwnProperty(child.uuid)){

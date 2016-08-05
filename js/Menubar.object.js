@@ -117,7 +117,8 @@ Menubar.object = function ( editor ) {
     var attributeList = new UI.Panel();
     attributeList.setClass( 'attributeList' );
     attributeList.add(new Material(editor));
-/*    attributeList.add(eventUI(editor));*/
+    attributeList.add(eventUI(editor));
+    attributeList.add(Menubar.object.animation(editor));
     attributeList.add(new Share.Table(editor));
 //gai==============================================================================================================
     var transformAttributes = new UI.Panel();

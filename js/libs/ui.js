@@ -109,7 +109,7 @@ UI.Element.prototype = {
 
 	}
 
-}
+};
 
 // properties
 

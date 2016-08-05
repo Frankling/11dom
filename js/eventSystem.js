@@ -13,6 +13,9 @@ eventSystem.event=function(obj){
         materialEvent:{type:"materialEvent",children:[]}
     };
 };
+eventSystem.ui=function(obj){
+
+};
 
 eventSystem.event.prototype={
     addAttribute:function(type,attribute){
@@ -31,3 +34,10 @@ eventSystem.event.prototype={
 
     }
 };
+eventSystem.ui.prototype={
+    createEditor:function(type,attribute){
+
+    }
+
+}
+

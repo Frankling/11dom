@@ -1246,6 +1246,7 @@ THREE.Quaternion.prototype = {
 
 		var cosHalfTheta = w * qb._w + x * qb._x + y * qb._y + z * qb._z;
 
+
 		if ( cosHalfTheta < 0 ) {
 
 			this._w = - qb._w;
@@ -11396,6 +11397,7 @@ THREE.BufferGeometry.prototype = {
 		if ( name === 'index' ) {
 
 			console.warn( 'THREE.BufferGeometry.addAttribute: Use .setIndex() for index attribute.' );
+
 			this.setIndex( attribute );
 
 			return;
