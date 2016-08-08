@@ -41,10 +41,15 @@ var Viewport=function(editor){
       //  editor.controls.update();
     });
 
-    var transformControls=new THREE.MyTransformControls(editor.camera,canvas);
-
+    var transformControls=new THREE.MyTransformControls(editor.camera,container.dom);
+nicai=transformControls
     transformControls.addEventListener("change",function(){
 
+        if(transformControls.hasIntersect){
+            editor.controls.enabled=false;
+        }else{
+            editor.controls.enabled=true;
+        }
         editor.signals.selectTransform.dispatch();
         editor.signals.sceneGraphChanged.dispatch();
     })
@@ -54,7 +59,7 @@ var Viewport=function(editor){
     var mousePosition=new THREE.Vector2();
     var raycaster = new THREE.Raycaster();
 
-    canvas.addEventListener("mousedown",onMouseDown,false);
+    container.dom.addEventListener("mousedown",onMouseDown,false);
 
     window.addEventListener( 'resize', onWindowResize, false );
    // var labelSelected;
@@ -65,7 +70,7 @@ var Viewport=function(editor){
         event.preventDefault();
         if(oldTime) isDoubleClick= (new Date().getTime()-oldTime)<300;
 
-
+        console.log(transformControls.hasIntersect)
         var button=event.button;
         var intersects=editor.getIntersects(event);
         if(button==0) {
@@ -169,11 +174,13 @@ var Viewport=function(editor){
     }
     function onMouseUp(event){
         event.preventDefault();
+
         editor.controls.enabled=true;
         isLabelSelect=false;
         //$(".label2d").css("pointer-events","visible");
-        container.dom.removeEventListener("mousedown",onMouseDown,false);
+
         container.dom.removeEventListener("mousemove",onMouseMove,false);
+        container.dom.removeEventListener("mousedown",onMouseUp,false);
     }
     function onWindowResize( event ) {
         editor.signals.windowResize.dispatch();
