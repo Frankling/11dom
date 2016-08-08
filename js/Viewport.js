@@ -42,7 +42,7 @@ var Viewport=function(editor){
     });
 
     var transformControls=new THREE.MyTransformControls(editor.camera,container.dom);
-nicai=transformControls
+
     transformControls.addEventListener("change",function(){
 
         if(transformControls.hasIntersect){
@@ -67,10 +67,9 @@ nicai=transformControls
     var isDoubleClick;
     var oldTime;
     function onMouseDown(event){
-        event.preventDefault();
+      //  event.preventDefault();
         if(oldTime) isDoubleClick= (new Date().getTime()-oldTime)<300;
 
-        console.log(transformControls.hasIntersect)
         var button=event.button;
         var intersects=editor.getIntersects(event);
         if(button==0) {
