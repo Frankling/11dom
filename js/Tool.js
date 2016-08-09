@@ -228,6 +228,39 @@ var Tool= function ( editor ) {
             }
         }
 
+        dataBase.events = {};
+        var eventObj = editor.eventObj;
+        for(var i in eventObj){
+            if(eventObj[i].event){
+                var events = eventObj[i].event;
+                dataBase.events[i]={};
+                dataBase.events[i].frameName = document.getElementById(i+"-eventFrame").childNodes[0].childNodes[1].innerHTML;
+                dataBase.events[i].frameLeft = document.getElementById(i+"-eventFrame").style.left;
+                dataBase.events[i].frameTop = document.getElementById(i+"-eventFrame").style.top;
+                for(var m in editor.attibuteArr[i]){
+                    dataBase.events[i][m] = {};
+                    for(var n in editor.attibuteArr[i][m]){
+                        dataBase.events[i][m][n] = {};
+                        dataBase.events[i][m][n].name = editor.attibuteArr[i][m][n].name;
+                        dataBase.events[i][m][n].inLink = editor.attibuteArr[i][m][n].inLink;
+                        dataBase.events[i][m][n].outLink = editor.attibuteArr[i][m][n].outLink;
+                        if(m == "mouseEvent"){
+                            dataBase.events[i][m][n].eventType = editor.attibuteArr[i][m][n].eventType;
+                        }
+                        if(m == "moveEvent"){
+                            dataBase.events[i][m][n].position = editor.attibuteArr[i][m][n].position;
+                            dataBase.events[i][m][n].rotation = editor.attibuteArr[i][m][n].rotation;
+                            dataBase.events[i][m][n].scale = editor.attibuteArr[i][m][n].scale;
+                        }
+                        if(m == "materialEvent"){
+                            dataBase.events[i][m][n].color = editor.attibuteArr[i][m][n].color;
+                        }
+                    }
+                }
+
+            }
+        }
+
         //composer
 
        dataBase.composer.DarkNight=editor.composer.DarkNight[1];

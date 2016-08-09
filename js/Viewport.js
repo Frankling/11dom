@@ -59,6 +59,24 @@ var Viewport=function(editor){
     var mousePosition=new THREE.Vector2();
     var raycaster = new THREE.Raycaster();
 
+    canvas.addEventListener("mousemove",changeMouse,false);
+    function changeMouse(event){
+        event.preventDefault();
+        var intersects=editor.getIntersects(event);
+        if (intersects.length > 0 && !transformControls.hasIntersect) {
+            var select = intersects[0].object;
+            if(select.event){
+                var e=  select.event.lib.mouseEvent;
+                for(var ei=0;ei< e.children.length;ei++){
+                    if(e.children[ei].attribute.eventType=="down"){canvas.style.cursor = "pointer";}
+                    else canvas.style.cursor = "default";
+                }
+            }
+            else canvas.style.cursor = "default";
+        }
+        else canvas.style.cursor = "default";
+    }
+
     container.dom.addEventListener("mousedown",onMouseDown,false);
 
     window.addEventListener( 'resize', onWindowResize, false );
@@ -78,6 +96,16 @@ var Viewport=function(editor){
                 var select=intersects[0].object;
 
                 editor.select(select);
+                if(select.event){
+                    var e=  select.event.lib.mouseEvent;
+                    for(var ei=0;ei< e.children.length;ei++){
+                        if(e.children[ei].attribute.eventType=="down"){
+                            select.event.dispatch(e.children[ei]);
+                        }
+
+                    }
+
+                }
                 if(intersects[0].object.hasOwnProperty("cameraPosition")){
                     if(isDoubleClick){
                        // updateLabelCamera(intersects[0].object,isDoubleClick);
@@ -355,12 +383,43 @@ var Viewport=function(editor){
 
         }
         for(var i in boxhelper){
-          if(boxhelper[i] instanceof  THREE.BoxHelper){
-
+            if(boxhelper[i] instanceof  THREE.BoxHelper){
                 if(editor.selected[i]!==undefined){
-
                     boxhelper[i].update(editor.selected[i]);
+                    if(editor.selected[i].event) {
+                        var child = editor.selected[i].event.lib.moveEvent.children;
+                        for (var m = 0; m < child.length; m++) {
+                            if (child[m].next) {
+                                var obj = child[m].parent.parent;
 
+                                //var rotate_x = child[m].attribute.rotation.x*Math.PI/180-(obj.getWorldRotation().x- obj.rotation.x);
+                                //var rotate_y = child[m].attribute.rotation.y*Math.PI/180-(obj.getWorldRotation().y- obj.rotation.y);
+                                //var rotate_z = child[m].attribute.rotation.z*Math.PI/180-(obj.getWorldRotation().z- obj.rotation.z);
+
+                                if(editor.transformType == "position") {
+                                    if (child[m].attribute.position.x == editor.transformPosition.x
+                                        && child[m].attribute.position.y == editor.transformPosition.y
+                                        && child[m].attribute.position.z == editor.transformPosition.z) {
+                                        obj.event.dispatch(child[m].next);
+                                    }
+                                }
+                                if(editor.transformType == "rotation") {
+                                    if (child[m].attribute.rotation.x == editor.transformRotation.x
+                                        && child[m].attribute.rotation.y == editor.transformRotation.y
+                                        && child[m].attribute.rotation.z == editor.transformRotation.z) {
+                                        obj.event.dispatch(child[m].next);
+                                    }
+                                }
+                                if(editor.transformType == "scale") {
+                                    if (obj.scale.x == child[m].attribute.scale.x
+                                        && obj.scale.y == child[m].attribute.scale.y
+                                        && obj.scale.z == child[m].attribute.scale.z) {
+                                        obj.event.dispatch(child[m].next);
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }

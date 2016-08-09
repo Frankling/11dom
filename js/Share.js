@@ -37,6 +37,8 @@ var Share=function(editor){
                     editor.selected[i].updateMatrixWorld();
                 }
             }
+            editor.transformType = "position";
+            editor.transformPosition.x = parseInt(this.dom.value);
             editor.signals.selectTransform.dispatch();
             editor.signals.sceneGraphChanged.dispatch();
         });
@@ -50,6 +52,8 @@ var Share=function(editor){
                     editor.selected[i].updateMatrixWorld();
                 }
             }
+            editor.transformType = "position";
+            editor.transformPosition.y = parseInt(this.dom.value);
             editor.signals.selectTransform.dispatch();
             editor.signals.sceneGraphChanged.dispatch();
         });
@@ -64,6 +68,8 @@ var Share=function(editor){
                     editor.selected[i].updateMatrixWorld();
                 }
             }
+            editor.transformType = "position";
+            editor.transformPosition.z = parseInt(this.dom.value);
             editor.signals.selectTransform.dispatch();
             editor.signals.sceneGraphChanged.dispatch();
         });
@@ -83,6 +89,8 @@ var Share=function(editor){
                     editor.selected[i].updateMatrixWorld();
                 }
             }
+            editor.transformType = "rotation";
+            editor.transformRotation.x = parseInt(this.dom.value);
             editor.signals.selectTransform.dispatch();
             editor.signals.sceneGraphChanged.dispatch();
         });
@@ -95,6 +103,8 @@ var Share=function(editor){
                     editor.selected[i].updateMatrixWorld();
                 }
             }
+            editor.transformType = "rotation";
+            editor.transformRotation.y = parseInt(this.dom.value);
             editor.signals.selectTransform.dispatch();
             editor.signals.sceneGraphChanged.dispatch();
         });
@@ -107,6 +117,8 @@ var Share=function(editor){
                     editor.selected[i].updateMatrixWorld();
                 }
             }
+            editor.transformType = "rotation";
+            editor.transformRotation.z = parseInt(this.dom.value);
             editor.signals.selectTransform.dispatch();
             editor.signals.sceneGraphChanged.dispatch();
         });
@@ -129,6 +141,7 @@ var Share=function(editor){
                     editor.selected[i].updateMatrixWorld();
                 }
             }
+            editor.transformType = "scale";
             editor.signals.selectTransform.dispatch();
             editor.signals.sceneGraphChanged.dispatch();
         });
@@ -142,6 +155,7 @@ var Share=function(editor){
                     editor.selected[i].updateMatrixWorld();
                 }
             }
+            editor.transformType = "scale";
             editor.signals.selectTransform.dispatch();
             editor.signals.sceneGraphChanged.dispatch();
         });
@@ -155,6 +169,7 @@ var Share=function(editor){
                     editor.selected[i].updateMatrixWorld();
                 }
             }
+            editor.transformType = "scale";
             editor.signals.selectTransform.dispatch();
             editor.signals.sceneGraphChanged.dispatch();
         });

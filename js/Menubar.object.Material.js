@@ -2,6 +2,29 @@
  * Created by DELL on 2016/2/16.
  */
 var Material = function (editor) {
+    function judge(type,selected,value){
+        if(selected.event){
+            var child = selected.event.lib.materialEvent.children;
+            for (var m = 0; m < child.length; m++) {
+                if (child[m].next) {
+                    var obj = child[m].next.parent.parent;
+                    if(type=="click"){
+                        if(value==child[m].attribute.color){
+                            obj.event.dispatch(child[m].next);
+                        }
+                    }
+                    if(type=="inputChange") {
+                        var colorkd2 = new THREE.Color();
+                        colorkd2.setHex(parseInt(child[m].attribute.color.substr(1), 16));
+                        if (value == colorkd2) {
+                            obj.event.dispatch(child[m].next);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     var materialAttributes = new UI.Panel();
     //材质
     var materialHeader = new UI.createDiv('attrHeader',materialAttributes,'材质');
@@ -69,6 +92,7 @@ var Material = function (editor) {
                     }
                 }
             })
+            judge("inputChange",editor.selected[i],colorkd);
         }
         editor.signals.sceneGraphChanged.dispatch();
     });
@@ -118,6 +142,7 @@ var Material = function (editor) {
                 }
             })
         }
+        judge("click",editor.selected[i],mColor.dom.getAttribute("value"));
         editor.signals.sceneGraphChanged.dispatch();
     });
 

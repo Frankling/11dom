@@ -129,6 +129,25 @@
               },true)
             }
 
+        this.initEvent=function(){
+        var eventObj=dataBase.events;
+        for(var i in eventObj){
+            var frameName = eventObj[i].frameName;
+            var left = eventObj[i].frameLeft;
+            var top = eventObj[i].frameTop;
+            var lib = {};
+            lib.mouseEvent = eventObj[i].mouseEvent;
+            lib.moveEvent = eventObj[i].moveEvent;
+            lib.materialEvent = eventObj[i].materialEvent;
+            editor.scene.traverse(function(child){
+                if(child.uuid == i){
+                    createEventFrame(left,top,child,frameName,lib);
+                    //aaa();
+                }
+            })
+        }
+
+    }
     };
     (function(){
 
@@ -164,6 +183,7 @@
             _initTHREE.initBackground();
             _initTHREE.initComposer();
             _initTHREE.initAmbientLight();
+            setTimeout(function(){_initTHREE.initEvent();},2000);
 
         });
 

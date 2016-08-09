@@ -88,6 +88,11 @@ var Editor = function () {
     this.loadEndV=0;
     this.geometriesText={};
 
+    this.eventObj = {};
+    this.attibuteArr = {};
+    this.transformType = "";
+    this.transformPosition = {x:0,y:0,z:0};
+    this.transformRotation = {x:0,y:0,z:0};
 
 
 };

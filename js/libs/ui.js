@@ -771,7 +771,8 @@ UI.Number = function ( number ) {
 
 		} catch ( error ) {
 
-			console.error( error.message );
+			//console.error( error.message );
+			alert("输入格式不正确！");
 
 		}
 
